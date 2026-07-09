@@ -14,6 +14,15 @@ const SUGGESTED_CHIPS = [
   "Low mood or crash",
   "Nausea",
   "Irritable",
+  "Dizzy or lightheaded",
+  "Tired or fatigued",
+  "Anxious or nervous",
+  "Sweaty",
+  "Tingling or numbness",
+  "Stomach pain",
+  "Diarrhea",
+  "Constipation",
+  "Other",
 ];
 
 type Step = "welcome" | "medication" | "chips";
@@ -28,11 +37,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
   const [error, setError] = useState(false);
 
   function toggle(label: string) {
-    setSelected((prev) =>
-      prev.includes(label)
-        ? prev.filter((l) => l !== label)
-        : [...prev, label],
-    );
+    setSelected((prev) => (prev.includes(label) ? prev.filter((l) => l !== label) : [...prev, label]));
   }
 
   function addCustom() {
@@ -49,9 +54,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
     setError(false);
     try {
       await createMedication(medication);
-      const ordered = [...SUGGESTED_CHIPS, ...customChips].filter((label) =>
-        selected.includes(label),
-      );
+      const ordered = [...SUGGESTED_CHIPS, ...customChips].filter((label) => selected.includes(label));
       await createEffectTypes([
         ...ordered.map((label, i) => ({ label, sort_order: i })),
         { label: "Actually fine", is_good: true, sort_order: ordered.length },
@@ -70,15 +73,12 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
       {step === "welcome" && (
         <div className="flex min-h-dvh flex-col items-center justify-center text-center">
           <img src="/bivi/bivi-waving.webp" alt="" className="mb-3 h-32 w-32" />
-          <h1 className="text-2xl font-bold">Hi, I'm Bivi</h1>
+          <h1 className="text-2xl font-bold">Hi, I'm Bivi!</h1>
           <p className="mt-3 text-ink-soft">
-            Setup takes about two minutes, and there are only two things to
-            tell me: which medication you take, and your own words for how it
+            Setup takes about two minutes, and there are only two things to tell me: which medication you take, and your own words for how it
             sometimes feels.
           </p>
-          <p className="mt-2 text-sm text-ink-faint">
-            Everything can be changed later in settings.
-          </p>
+          <p className="mt-2 text-sm text-ink-faint">Everything can be changed later in settings.</p>
           <button
             onClick={() => setStep("medication")}
             className="mt-8 w-full rounded-xl bg-accent px-4 py-3 font-bold text-on-accent hover:bg-accent-deep"
@@ -92,9 +92,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
         <div className="pt-10">
           <p className="text-sm text-ink-faint">Step 1 of 2</p>
           <h1 className="mt-1 text-2xl font-bold">Your medication</h1>
-          <p className="mt-2 mb-6 text-ink-soft">
-            More medications can be added later in settings.
-          </p>
+          <p className="mt-2 mb-6 text-ink-soft">More medications can be added later in settings.</p>
           <MedicationForm
             submitLabel="Next"
             onSave={async (input) => {
@@ -110,8 +108,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
           <p className="text-sm text-ink-faint">Step 2 of 2</p>
           <h1 className="mt-1 text-2xl font-bold">Your words for it</h1>
           <p className="mt-2 mb-6 text-ink-soft">
-            Pick the side effects you sometimes notice — these become your
-            one-tap chips. Rename or change them anytime.
+            Pick the side effects you sometimes notice – these become your one-tap chips. Rename or change them anytime.
           </p>
 
           <div className="flex flex-wrap gap-2">
@@ -147,24 +144,16 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
               placeholder="Add your own words…"
               className="flex-1 rounded-xl border border-line bg-surface px-4 py-3 outline-none focus:border-accent"
             />
-            <button
-              onClick={addCustom}
-              className="rounded-xl border border-line px-4 py-3 text-ink-soft hover:border-line-strong hover:bg-surface"
-            >
+            <button onClick={addCustom} className="rounded-xl border border-line px-4 py-3 text-ink-soft hover:border-line-strong hover:bg-surface">
               Add
             </button>
           </div>
 
           <p className="mt-4 text-sm text-ink-faint">
-            An "Actually fine" chip is included automatically — good days count
-            too.
+            An <em>"Actually fine"</em> chip is included automatically – good days count too.
           </p>
 
-          {error && (
-            <p className="mt-3 text-sm text-red-700">
-              Couldn't save your setup. Check your connection and try again.
-            </p>
-          )}
+          {error && <p className="mt-3 text-sm text-red-700">Couldn't save your setup. Check your connection and try again.</p>}
 
           <button
             onClick={finish}

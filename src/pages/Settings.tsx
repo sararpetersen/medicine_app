@@ -2,21 +2,12 @@ import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { useSession } from "../hooks/useSession";
 import type { EffectType, Medication } from "../lib/db";
-import {
-  createEffectTypes,
-  createMedication,
-  listEffectTypes,
-  listMedications,
-  toHm,
-  updateEffectType,
-  updateMedication,
-} from "../lib/db";
+import { createEffectTypes, createMedication, listEffectTypes, listMedications, toHm, updateEffectType, updateMedication } from "../lib/db";
 import MedicationForm from "../components/MedicationForm";
 import { usePrefs, type TextSize, type Theme } from "../lib/prefs";
 
 function describeDose(med: Medication): string {
-  const dose =
-    med.dose_amount != null ? `${med.dose_amount} ${med.dose_unit ?? ""}` : "";
+  const dose = med.dose_amount != null ? `${med.dose_amount} ${med.dose_unit ?? ""}` : "";
   const times = med.schedule_times.map(toHm).join(", ");
   return [dose.trim(), times].filter(Boolean).join(" · ");
 }
@@ -25,7 +16,10 @@ function MedicationsSection() {
   const [meds, setMeds] = useState<Medication[]>([]);
   const [editing, setEditing] = useState<string | "new" | null>(null);
 
-  const load = () => listMedications().then(setMeds).catch(() => {});
+  const load = () =>
+    listMedications()
+      .then(setMeds)
+      .catch(() => {});
   useEffect(() => {
     void load();
   }, []);
@@ -36,10 +30,7 @@ function MedicationsSection() {
       <div className="mt-2 space-y-2">
         {meds.map((med) =>
           editing === med.id ? (
-            <div
-              key={med.id}
-              className="rounded-2xl border border-line bg-surface p-4"
-            >
+            <div key={med.id} className="rounded-2xl border border-line bg-surface p-4">
               <MedicationForm
                 initial={med}
                 submitLabel="Save"
@@ -54,26 +45,17 @@ function MedicationsSection() {
           ) : (
             <div
               key={med.id}
-              className={`flex items-center justify-between rounded-2xl border border-line bg-surface p-4 ${
-                med.active ? "" : "opacity-60"
-              }`}
+              className={`flex items-center justify-between rounded-2xl border border-line bg-surface p-4 ${med.active ? "" : "opacity-60"}`}
             >
               <div>
                 <p className="font-bold">
                   {med.name}
-                  {!med.active && (
-                    <span className="ml-2 text-sm font-normal text-ink-faint">
-                      paused
-                    </span>
-                  )}
+                  {!med.active && <span className="ml-2 text-sm font-normal text-ink-faint">paused</span>}
                 </p>
                 <p className="text-sm text-ink-soft">{describeDose(med)}</p>
               </div>
               <div className="flex gap-3 text-sm">
-                <button
-                  onClick={() => setEditing(med.id)}
-                  className="text-accent hover:underline"
-                >
+                <button onClick={() => setEditing(med.id)} className="text-accent hover:underline">
                   Edit
                 </button>
                 <button
@@ -115,13 +97,7 @@ function MedicationsSection() {
   );
 }
 
-function ChipRow({
-  chip,
-  onChanged,
-}: {
-  chip: EffectType;
-  onChanged: () => Promise<void>;
-}) {
+function ChipRow({ chip, onChanged }: { chip: EffectType; onChanged: () => Promise<void> }) {
   const [label, setLabel] = useState(chip.label);
 
   async function commitRename() {
@@ -135,11 +111,7 @@ function ChipRow({
   }
 
   return (
-    <div
-      className={`flex items-center gap-2 rounded-2xl border border-line bg-surface px-4 py-2 ${
-        chip.active ? "" : "opacity-60"
-      }`}
-    >
+    <div className={`flex items-center gap-2 rounded-2xl border border-line bg-surface px-4 py-2 ${chip.active ? "" : "opacity-60"}`}>
       <input
         value={label}
         onChange={(e) => setLabel(e.target.value)}
@@ -151,9 +123,7 @@ function ChipRow({
         className="min-w-0 flex-1 bg-transparent py-1 outline-none"
       />
       {chip.is_good ? (
-        <span className="shrink-0 rounded-full bg-good-soft px-2 py-1 text-xs text-good">
-          built-in
-        </span>
+        <span className="shrink-0 rounded-full bg-good-soft px-2 py-1 text-xs text-good">built-in</span>
       ) : (
         <button
           onClick={async () => {
@@ -173,7 +143,10 @@ function ChipsSection() {
   const [chips, setChips] = useState<EffectType[]>([]);
   const [draft, setDraft] = useState("");
 
-  const load = () => listEffectTypes().then(setChips).catch(() => {});
+  const load = () =>
+    listEffectTypes()
+      .then(setChips)
+      .catch(() => {});
   useEffect(() => {
     void load();
   }, []);
@@ -190,9 +163,7 @@ function ChipsSection() {
   return (
     <section className="mt-8">
       <h2 className="font-bold">Your side-effect chips</h2>
-      <p className="mt-1 text-sm text-ink-soft">
-        Tap a name to rename it. Retired chips keep their old logs.
-      </p>
+      <p className="mt-1 text-sm text-ink-soft">Tap a name to rename it. Retired chips keep their old logs.</p>
       <div className="mt-2 space-y-2">
         {chips.map((chip) => (
           <ChipRow key={chip.id} chip={chip} onChanged={load} />
@@ -240,9 +211,7 @@ function AccessibilitySection() {
 
   const seg = (on: boolean) =>
     `flex-1 rounded-xl border px-3 py-2 text-sm transition-colors ${
-      on
-        ? "border-accent bg-accent-soft font-bold text-accent"
-        : "border-line bg-surface text-ink-soft hover:border-line-strong hover:bg-canvas"
+      on ? "border-accent bg-accent-soft font-bold text-accent" : "border-line bg-surface text-ink-soft hover:border-line-strong hover:bg-canvas"
     }`;
 
   return (
@@ -269,12 +238,7 @@ function AccessibilitySection() {
           <p className="text-sm text-ink-soft">Theme</p>
           <div className="mt-2 flex gap-2">
             {THEMES.map(({ value, label }) => (
-              <button
-                key={value}
-                onClick={() => setPref("theme", value)}
-                aria-pressed={prefs.theme === value}
-                className={seg(prefs.theme === value)}
-              >
+              <button key={value} onClick={() => setPref("theme", value)} aria-pressed={prefs.theme === value} className={seg(prefs.theme === value)}>
                 {label}
               </button>
             ))}
@@ -284,9 +248,7 @@ function AccessibilitySection() {
         <div className="flex items-center justify-between gap-3 rounded-2xl border border-line bg-surface p-4">
           <div>
             <p className="font-bold">Simplified logging</p>
-            <p className="text-sm text-ink-soft">
-              Just the chips — hides severity and daily context on Today.
-            </p>
+            <p className="text-sm text-ink-soft">Just the chips – hides severity and daily context on 'Today'.</p>
           </div>
           <button
             role="switch"

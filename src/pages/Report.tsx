@@ -1,13 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import type { ContextLog, DoseLog, EffectLog, Medication } from "../lib/db";
-import {
-  listContextLogsBetween,
-  listDoseLogsBetween,
-  listEffectLogsBetween,
-  listMedications,
-  localDateString,
-  toHm,
-} from "../lib/db";
+import { listContextLogsBetween, listDoseLogsBetween, listEffectLogsBetween, listMedications, localDateString, toHm } from "../lib/db";
 import { contextInsights, severityWord, summarizeEffects } from "../lib/stats";
 
 const RANGES = [14, 30, 90];
@@ -64,10 +57,7 @@ export default function Report() {
     <div className="pt-8">
       <div className="no-print">
         <h1 className="text-2xl font-bold">Doctor report</h1>
-        <p className="mt-1 text-sm text-ink-soft">
-          A one-page summary for your next appointment. Print it or save it as
-          a PDF.
-        </p>
+        <p className="mt-1 text-sm text-ink-soft">A one-page summary for your next appointment. Print it or save it as a PDF.</p>
         <div className="mt-3 flex gap-2">
           {RANGES.map((r) => (
             <button
@@ -88,14 +78,9 @@ export default function Report() {
 
       {effects.length === 0 && doses.length === 0 ? (
         <div className="mt-6 rounded-2xl bg-accent-soft p-5 text-center">
-          <img
-            src="/bivi/bivi-caring.webp"
-            alt=""
-            className="mx-auto mb-3 h-24 w-24"
-          />
+          <img src="/bivi/bivi-caring.webp" alt="" className="mx-auto mb-3 h-24 w-24" />
           <p className="text-sm text-accent">
-            The report builds itself from your logs — once there's data in
-            this date range, it appears here ready to print.
+            The report builds itself from your logs – once there's data in this date range, it appears here ready to print.
           </p>
         </div>
       ) : (
@@ -112,10 +97,8 @@ export default function Report() {
               .map((m) => (
                 <p key={m.id} className="text-sm">
                   {m.name}
-                  {m.dose_amount != null &&
-                    ` — ${m.dose_amount} ${m.dose_unit ?? ""}`}
-                  {m.schedule_times.length > 0 &&
-                    ` at ${m.schedule_times.map(toHm).join(", ")}`}
+                  {m.dose_amount != null && ` — ${m.dose_amount} ${m.dose_unit ?? ""}`}
+                  {m.schedule_times.length > 0 && ` at ${m.schedule_times.map(toHm).join(", ")}`}
                 </p>
               ))}
             <p className="mt-1 text-sm text-ink-soft">
@@ -141,14 +124,8 @@ export default function Report() {
                       {s.is_good && " (good day)"}
                     </td>
                     <td className="py-1.5 pr-2">{s.count}</td>
-                    <td className="py-1.5 pr-2">
-                      {s.avgSeverity != null
-                        ? severityWord(s.avgSeverity)
-                        : "—"}
-                    </td>
-                    <td className="py-1.5">
-                      {s.topBucket ? `${s.topBucket} after dose` : "—"}
-                    </td>
+                    <td className="py-1.5 pr-2">{s.avgSeverity != null ? severityWord(s.avgSeverity) : "—"}</td>
+                    <td className="py-1.5">{s.topBucket ? `${s.topBucket} after dose` : "—"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -160,18 +137,14 @@ export default function Report() {
                 <ul className="mt-1 list-inside list-disc text-sm">
                   {insights.map((i) => (
                     <li key={i.label}>
-                      {i.rateWith.toFixed(1)} effects/day on {i.label} vs{" "}
-                      {i.rateWithout.toFixed(1)} otherwise
+                      {i.rateWith.toFixed(1)} effects/day on {i.label} vs {i.rateWithout.toFixed(1)} otherwise
                     </li>
                   ))}
                 </ul>
               </>
             )}
 
-            <p className="mt-4 text-xs text-ink-faint">
-              Self-reported via Bivi. Severity scale: barely / annoying /
-              rough.
-            </p>
+            <p className="mt-4 text-xs text-ink-faint">Self-reported via Bivi. Severity scale: barely / annoying / rough.</p>
           </div>
 
           <button

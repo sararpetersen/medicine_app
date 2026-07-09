@@ -21,16 +21,12 @@ export default function Login() {
     <div className="flex min-h-dvh flex-col items-center justify-center px-6">
       <img src="/bivi/bivi-logo.webp" alt="" className="mb-3 h-28 w-28" />
       <h1 className="text-2xl font-bold">Bivi</h1>
-      <p className="mt-1 mb-8 text-center text-ink-soft">
-        Your little side-effect sidekick
-      </p>
+      <p className="mt-1 mb-8 text-center text-ink-soft">Your little side-effect sidekick</p>
 
       {status === "sent" ? (
         <div className="w-full max-w-sm rounded-2xl bg-good-soft p-5 text-center">
           <p className="font-bold text-good">Check your email</p>
-          <p className="mt-1 text-sm text-ink-soft">
-            A sign-in link is on its way to {email}. You can close this tab.
-          </p>
+          <p className="mt-1 text-sm text-ink-soft">A sign-in link is on its way to {email}. You can close this tab.</p>
         </div>
       ) : (
         <form onSubmit={sendLink} className="w-full max-w-sm space-y-3">
@@ -49,14 +45,8 @@ export default function Login() {
           >
             {status === "sending" ? "Sending…" : "Email me a sign-in link"}
           </button>
-          <p className="text-center text-sm text-ink-faint">
-            No password to remember — just click the link.
-          </p>
-          {status === "error" && (
-            <p className="text-center text-sm text-red-700">
-              That didn't work. Check the address and try again.
-            </p>
-          )}
+          <p className="text-center text-sm text-ink-faint">No password to remember – just click the link.</p>
+          {status === "error" && <p className="text-center text-sm text-red-700">That didn't work. Check the address and try again.</p>}
         </form>
       )}
     </div>

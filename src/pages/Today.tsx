@@ -1,12 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type {
-  ContextFields,
-  ContextLog,
-  DoseLog,
-  EffectLog,
-  EffectType,
-  Medication,
-} from "../lib/db";
+import type { ContextFields, ContextLog, DoseLog, EffectLog, EffectType, Medication } from "../lib/db";
 import {
   createDoseLog,
   createEffectLogs,
@@ -42,22 +35,13 @@ function todayAt(hm: string): Date {
   return d;
 }
 
-function DoseCard({
-  med,
-  logs,
-  onChanged,
-}: {
-  med: Medication;
-  logs: DoseLog[];
-  onChanged: () => Promise<void>;
-}) {
+function DoseCard({ med, logs, onChanged }: { med: Medication; logs: DoseLog[]; onChanged: () => Promise<void> }) {
   const [pickingTime, setPickingTime] = useState(false);
   const [time, setTime] = useState(() => new Date().toTimeString().slice(0, 5));
   const taken = logs.filter((l) => !l.skipped);
   const skipped = logs.some((l) => l.skipped);
 
-  const dose =
-    med.dose_amount != null ? ` ${med.dose_amount} ${med.dose_unit ?? ""}` : "";
+  const dose = med.dose_amount != null ? ` ${med.dose_amount} ${med.dose_unit ?? ""}` : "";
 
   return (
     <div className="rounded-2xl border border-line bg-surface p-4">
@@ -66,25 +50,14 @@ function DoseCard({
           {med.name}
           <span className="font-normal text-ink-soft">{dose}</span>
         </p>
-        {taken.length > 0 && (
-          <span className="rounded-full bg-good-soft px-3 py-1 text-sm text-good">
-            taken
-          </span>
-        )}
-        {skipped && taken.length === 0 && (
-          <span className="rounded-full bg-canvas px-3 py-1 text-sm text-ink-faint">
-            skipped
-          </span>
-        )}
+        {taken.length > 0 && <span className="rounded-full bg-good-soft px-3 py-1 text-sm text-good">taken</span>}
+        {skipped && taken.length === 0 && <span className="rounded-full bg-canvas px-3 py-1 text-sm text-ink-faint">skipped</span>}
       </div>
 
       {taken.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-2">
           {taken.map((log) => (
-            <span
-              key={log.id}
-              className="inline-flex items-center gap-1 rounded-full border border-line px-3 py-1 text-sm text-ink-soft"
-            >
+            <span key={log.id} className="inline-flex items-center gap-1 rounded-full border border-line px-3 py-1 text-sm text-ink-soft">
               {fmtTime(log.taken_at)}
               <button
                 onClick={async () => {
@@ -167,36 +140,22 @@ function DoseCard({
   );
 }
 
-function QuickLog({
-  types,
-  simplified,
-  onLogged,
-}: {
-  types: EffectType[];
-  simplified: boolean;
-  onLogged: () => Promise<void>;
-}) {
+function QuickLog({ types, simplified, onLogged }: { types: EffectType[]; simplified: boolean; onLogged: () => Promise<void> }) {
   const [selected, setSelected] = useState<string[]>([]);
   const [severity, setSeverity] = useState<number | null>(null);
   const [earlier, setEarlier] = useState(false);
   const [date, setDate] = useState(() => localDateString());
-  const [time, setTime] = useState(() =>
-    new Date().toTimeString().slice(0, 5),
-  );
+  const [time, setTime] = useState(() => new Date().toTimeString().slice(0, 5));
   const [busy, setBusy] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const confirmTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const active = types.filter((t) => t.active);
-  const hasBadSelection = selected.some(
-    (id) => !types.find((t) => t.id === id)?.is_good,
-  );
+  const hasBadSelection = selected.some((id) => !types.find((t) => t.id === id)?.is_good);
 
   function toggle(id: string) {
     setConfirmed(false);
-    setSelected((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
+    setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   }
 
   async function logIt() {
@@ -225,9 +184,7 @@ function QuickLog({
   return (
     <section className="mt-8">
       <h2 className="font-bold">How's it feeling right now?</h2>
-      <p className="mt-1 text-sm text-ink-faint">
-        Tap anything that fits — or nothing at all.
-      </p>
+      <p className="mt-1 text-sm text-ink-faint">Tap anything that fits — or nothing at all.</p>
 
       <div className="mt-3 flex flex-wrap gap-2">
         {active.map((t) => {
@@ -252,16 +209,13 @@ function QuickLog({
       {hasBadSelection && !simplified && (
         <div className="mt-4">
           <p className="text-sm text-ink-soft">
-            How much is it bothering you?{" "}
-            <span className="text-ink-faint">(optional)</span>
+            How much is it bothering you? <span className="text-ink-faint">(optional)</span>
           </p>
           <div className="mt-2 flex gap-2">
             {SEVERITIES.map((s) => (
               <button
                 key={s.value}
-                onClick={() =>
-                  setSeverity(severity === s.value ? null : s.value)
-                }
+                onClick={() => setSeverity(severity === s.value ? null : s.value)}
                 aria-pressed={severity === s.value}
                 className={`flex-1 rounded-xl border px-3 py-2 text-sm transition-colors ${
                   severity === s.value
@@ -283,22 +237,14 @@ function QuickLog({
             <button
               onClick={() => setEarlier(false)}
               aria-pressed={!earlier}
-              className={
-                earlier
-                  ? "text-ink-faint hover:underline"
-                  : "font-bold text-accent"
-              }
+              className={earlier ? "text-ink-faint hover:underline" : "font-bold text-accent"}
             >
               Now
             </button>
             <button
               onClick={() => setEarlier(true)}
               aria-pressed={earlier}
-              className={
-                earlier
-                  ? "font-bold text-accent"
-                  : "text-ink-faint hover:underline"
-              }
+              className={earlier ? "font-bold text-accent" : "text-ink-faint hover:underline"}
             >
               Earlier
             </button>
@@ -335,14 +281,8 @@ function QuickLog({
       <div role="status" aria-live="polite" className="mt-3 min-h-10">
         {confirmed && (
           <div className="flex items-center gap-2">
-            <img
-              src="/bivi/bivi-celebrating.webp"
-              alt=""
-              className="h-10 w-10"
-            />
-            <p className="text-sm text-good">
-              Logged. That's all — you're done.
-            </p>
+            <img src="/bivi/bivi-celebrating.webp" alt="" className="h-10 w-10" />
+            <p className="text-sm text-good">Logged. That's all – you're done.</p>
           </div>
         )}
       </div>
@@ -361,13 +301,7 @@ const CONTEXT_TOGGLES: {
   { key: "stress", label: "Stressful day", onValue: 3 },
 ];
 
-function ContextCard({
-  context,
-  onChanged,
-}: {
-  context: ContextLog | null;
-  onChanged: () => Promise<void>;
-}) {
+function ContextCard({ context, onChanged }: { context: ContextLog | null; onChanged: () => Promise<void> }) {
   const fields: ContextFields = {
     sleep_quality: context?.sleep_quality ?? null,
     ate_breakfast: context?.ate_breakfast ?? null,
@@ -395,9 +329,7 @@ function ContextCard({
               onClick={() => toggle(key, onValue)}
               aria-pressed={on}
               className={`rounded-full border px-4 py-2 text-sm transition-colors ${
-                on
-                  ? "border-good bg-good-soft font-bold text-good"
-                  : "border-line bg-surface text-ink-soft hover:border-line-strong hover:bg-canvas"
+                on ? "border-good bg-good-soft font-bold text-good" : "border-line bg-surface text-ink-soft hover:border-line-strong hover:bg-canvas"
               }`}
             >
               {label}
@@ -456,12 +388,7 @@ export default function Today() {
 
       <div className="mt-4 space-y-3">
         {meds.map((med) => (
-          <DoseCard
-            key={med.id}
-            med={med}
-            logs={doseLogs.filter((l) => l.medication_id === med.id)}
-            onChanged={refresh}
-          />
+          <DoseCard key={med.id} med={med} logs={doseLogs.filter((l) => l.medication_id === med.id)} onChanged={refresh} />
         ))}
       </div>
 
@@ -472,22 +399,12 @@ export default function Today() {
           <h2 className="font-bold">Logged today</h2>
           <ul className="mt-2 space-y-2">
             {effectLogs.map((log) => (
-              <li
-                key={log.id}
-                className="flex items-center justify-between rounded-2xl border border-line bg-surface px-4 py-2"
-              >
+              <li key={log.id} className="flex items-center justify-between rounded-2xl border border-line bg-surface px-4 py-2">
                 <span>
-                  <span className="text-sm text-ink-faint">
-                    {fmtTime(log.occurred_at)}
-                  </span>{" "}
-                  <span className={log.is_good ? "text-good" : ""}>
-                    {log.label}
-                  </span>
+                  <span className="text-sm text-ink-faint">{fmtTime(log.occurred_at)}</span>{" "}
+                  <span className={log.is_good ? "text-good" : ""}>{log.label}</span>
                   {log.severity != null && (
-                    <span className="text-sm text-ink-soft">
-                      {" "}
-                      · {SEVERITIES.find((s) => s.value === log.severity)?.label.toLowerCase()}
-                    </span>
+                    <span className="text-sm text-ink-soft"> · {SEVERITIES.find((s) => s.value === log.severity)?.label.toLowerCase()}</span>
                   )}
                 </span>
                 <button
@@ -506,9 +423,7 @@ export default function Today() {
         </section>
       )}
 
-      {!prefs.simplified && (
-        <ContextCard context={context} onChanged={refresh} />
-      )}
+      {!prefs.simplified && <ContextCard context={context} onChanged={refresh} />}
     </div>
   );
 }

@@ -79,9 +79,7 @@ export default function History() {
       return groups.get(date)!;
     };
     doses.forEach((d) => group(localDateString(new Date(d.taken_at))).doses.push(d));
-    effects.forEach((e) =>
-      group(localDateString(new Date(e.occurred_at))).effects.push(e),
-    );
+    effects.forEach((e) => group(localDateString(new Date(e.occurred_at))).effects.push(e));
     contexts.forEach((c) => {
       const g = group(c.date);
       if (contextChips(c).length > 0) g.context = c;
@@ -101,8 +99,7 @@ export default function History() {
     void refresh();
   }, [refresh]);
 
-  const medName = (id: string) =>
-    meds.find((m) => m.id === id)?.name ?? "Medication";
+  const medName = (id: string) => meds.find((m) => m.id === id)?.name ?? "Medication";
 
   if (!loaded) {
     return <p className="pt-10 text-center text-ink-faint">One moment…</p>;
@@ -114,15 +111,8 @@ export default function History() {
 
       {days.length === 0 ? (
         <div className="mt-6 rounded-2xl bg-accent-soft p-5 text-center">
-          <img
-            src="/bivi/bivi-writing.webp"
-            alt=""
-            className="mx-auto mb-3 h-24 w-24"
-          />
-          <p className="text-sm text-accent">
-            Nothing here yet. Once you log on the Today screen, your timeline
-            grows on its own.
-          </p>
+          <img src="/bivi/bivi-writing.webp" alt="" className="mx-auto mb-3 h-24 w-24" />
+          <p className="text-sm text-accent">Nothing here yet. Once you log on the 'Today' screen, your timeline grows on its own.</p>
         </div>
       ) : (
         <div className="mt-4 space-y-6">
@@ -131,18 +121,10 @@ export default function History() {
               <h2 className="font-bold">{dayTitle(day.date)}</h2>
               <div className="mt-2 space-y-2">
                 {day.doses.map((dose) => (
-                  <div
-                    key={dose.id}
-                    className="flex items-center justify-between rounded-2xl border border-line bg-surface px-4 py-2"
-                  >
+                  <div key={dose.id} className="flex items-center justify-between rounded-2xl border border-line bg-surface px-4 py-2">
                     <span>
-                      <span className="text-sm text-ink-faint">
-                        {fmtTime(dose.taken_at)}
-                      </span>{" "}
-                      {medName(dose.medication_id)}
-                      {dose.skipped && (
-                        <span className="text-sm text-ink-faint"> · skipped</span>
-                      )}
+                      <span className="text-sm text-ink-faint">{fmtTime(dose.taken_at)}</span> {medName(dose.medication_id)}
+                      {dose.skipped && <span className="text-sm text-ink-faint"> · skipped</span>}
                     </span>
                     <button
                       onClick={async () => {
@@ -158,23 +140,11 @@ export default function History() {
                 ))}
 
                 {day.effects.map((log) => (
-                  <div
-                    key={log.id}
-                    className="flex items-center justify-between rounded-2xl border border-line bg-surface px-4 py-2"
-                  >
+                  <div key={log.id} className="flex items-center justify-between rounded-2xl border border-line bg-surface px-4 py-2">
                     <span>
-                      <span className="text-sm text-ink-faint">
-                        {fmtTime(log.occurred_at)}
-                      </span>{" "}
-                      <span className={log.is_good ? "text-good" : ""}>
-                        {log.label}
-                      </span>
-                      {log.severity != null && (
-                        <span className="text-sm text-ink-soft">
-                          {" "}
-                          · {SEVERITY_WORDS[log.severity]}
-                        </span>
-                      )}
+                      <span className="text-sm text-ink-faint">{fmtTime(log.occurred_at)}</span>{" "}
+                      <span className={log.is_good ? "text-good" : ""}>{log.label}</span>
+                      {log.severity != null && <span className="text-sm text-ink-soft"> · {SEVERITY_WORDS[log.severity]}</span>}
                     </span>
                     <button
                       onClick={async () => {
@@ -189,11 +159,7 @@ export default function History() {
                   </div>
                 ))}
 
-                {day.context && (
-                  <p className="px-1 text-sm text-ink-faint">
-                    Context: {contextChips(day.context).join(" · ")}
-                  </p>
-                )}
+                {day.context && <p className="px-1 text-sm text-ink-faint">Context: {contextChips(day.context).join(" · ")}</p>}
               </div>
             </section>
           ))}

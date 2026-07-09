@@ -87,3 +87,10 @@ Notes:
 7. **Polish**: insight card on Today, reminder, small delights.
 
 Milestone 3 is the point of the whole project — everything before it should be as thin as possible to get there fast.
+
+## Launch checklist (only matters if Sidekick ever goes public)
+
+- **Rename the app** — "Sidekick" conflicts with Sidekick Health (same industry); pick a distinctive coined name and do a quick trademark search first.
+- **Privacy policy** — required before any public onboarding page; the app handles health data, so this is non-negotiable (GDPR applies).
+- **Health-app integration** (Apple Health etc.) needs a native wrapper (Capacitor) — a PWA cannot access HealthKit. Revisit if/when going native.
+- Move off the shared Supabase project onto a dedicated one.

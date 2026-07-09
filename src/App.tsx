@@ -5,9 +5,10 @@ import { listMedications } from "./lib/db";
 import Login from "./pages/Login";
 import History from "./pages/History";
 import Onboarding from "./pages/Onboarding";
+import Patterns from "./pages/Patterns";
+import Report from "./pages/Report";
 import Settings from "./pages/Settings";
 import Today from "./pages/Today";
-import Placeholder from "./components/Placeholder";
 
 const tabs = [
   { to: "/", label: "Today" },
@@ -24,24 +25,8 @@ function Shell() {
         <Routes>
           <Route path="/" element={<Today />} />
           <Route path="/history" element={<History />} />
-          <Route
-            path="/patterns"
-            element={
-              <Placeholder
-                title="Patterns"
-                description="Once there's a little data, Sidekick shows when effects appear and what they correlate with."
-              />
-            }
-          />
-          <Route
-            path="/report"
-            element={
-              <Placeholder
-                title="Doctor report"
-                description="A one-page printable summary to bring to your next appointment."
-              />
-            }
-          />
+          <Route path="/patterns" element={<Patterns />} />
+          <Route path="/report" element={<Report />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

@@ -19,7 +19,6 @@ import {
   listMedications,
   localDateString,
   saveContextForDay,
-  toHm,
 } from "../lib/db";
 import { usePrefs } from "../lib/prefs";
 
@@ -53,7 +52,7 @@ function DoseCard({
   onChanged: () => Promise<void>;
 }) {
   const [pickingTime, setPickingTime] = useState(false);
-  const [time, setTime] = useState(toHm(med.schedule_times[0] ?? "08:00"));
+  const [time, setTime] = useState(() => new Date().toTimeString().slice(0, 5));
   const taken = logs.filter((l) => !l.skipped);
   const skipped = logs.some((l) => l.skipped);
 
@@ -143,7 +142,10 @@ function DoseCard({
             Taken now
           </button>
           <button
-            onClick={() => setPickingTime(true)}
+            onClick={() => {
+              setTime(new Date().toTimeString().slice(0, 5));
+              setPickingTime(true);
+            }}
             className="rounded-xl border border-line px-4 py-2 text-sm text-ink-soft hover:border-line-strong hover:bg-canvas"
           >
             Earlier…

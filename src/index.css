@@ -55,6 +55,19 @@ body {
   }
 }
 
+@media print {
+  nav,
+  .no-print {
+    display: none !important;
+  }
+  html {
+    background: white;
+  }
+  main {
+    padding-bottom: 0 !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

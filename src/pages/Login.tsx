@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "../lib/supabase";
+import { requireSupabase } from "../lib/supabase";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
@@ -10,7 +10,7 @@ export default function Login() {
   async function sendLink(e: React.FormEvent) {
     e.preventDefault();
     setStatus("sending");
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await requireSupabase().auth.signInWithOtp({
       email,
       options: { emailRedirectTo: window.location.origin },
     });

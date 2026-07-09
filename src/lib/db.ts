@@ -1,4 +1,4 @@
-import { supabase } from "./supabase";
+import { requireSupabase } from "./supabase";
 
 export interface Medication {
   id: string;
@@ -30,6 +30,7 @@ export function toHm(time: string): string {
 }
 
 export async function listMedications(): Promise<Medication[]> {
+  const supabase = requireSupabase();
   const { data, error } = await supabase
     .from("sidekick_medications")
     .select("id,name,dose_amount,dose_unit,schedule_times,active")
@@ -39,6 +40,7 @@ export async function listMedications(): Promise<Medication[]> {
 }
 
 export async function createMedication(input: MedicationInput): Promise<void> {
+  const supabase = requireSupabase();
   const { error } = await supabase.from("sidekick_medications").insert(input);
   if (error) throw error;
 }
@@ -47,6 +49,7 @@ export async function updateMedication(
   id: string,
   patch: Partial<MedicationInput> & { active?: boolean },
 ): Promise<void> {
+  const supabase = requireSupabase();
   const { error } = await supabase
     .from("sidekick_medications")
     .update(patch)
@@ -55,6 +58,7 @@ export async function updateMedication(
 }
 
 export async function listEffectTypes(): Promise<EffectType[]> {
+  const supabase = requireSupabase();
   const { data, error } = await supabase
     .from("sidekick_effect_types")
     .select("id,label,is_good,sort_order,active")
@@ -67,6 +71,7 @@ export async function listEffectTypes(): Promise<EffectType[]> {
 export async function createEffectTypes(
   inputs: { label: string; is_good?: boolean; sort_order?: number }[],
 ): Promise<void> {
+  const supabase = requireSupabase();
   // Bulk inserts must have uniform keys per row, or Postgres receives
   // explicit nulls instead of column defaults.
   const rows = inputs.map((input, i) => ({
@@ -123,6 +128,7 @@ export async function listDoseLogsBetween(
   start: Date,
   end: Date,
 ): Promise<DoseLog[]> {
+  const supabase = requireSupabase();
   const { data, error } = await supabase
     .from("sidekick_dose_logs")
     .select("id,medication_id,taken_at,skipped")
@@ -143,6 +149,7 @@ export async function createDoseLog(input: {
   taken_at?: string;
   skipped?: boolean;
 }): Promise<void> {
+  const supabase = requireSupabase();
   const { error } = await supabase.from("sidekick_dose_logs").insert({
     medication_id: input.medication_id,
     taken_at: input.taken_at ?? new Date().toISOString(),
@@ -152,6 +159,7 @@ export async function createDoseLog(input: {
 }
 
 export async function deleteDoseLog(id: string): Promise<void> {
+  const supabase = requireSupabase();
   const { error } = await supabase
     .from("sidekick_dose_logs")
     .delete()
@@ -163,6 +171,7 @@ export async function listEffectLogsBetween(
   start: Date,
   end: Date,
 ): Promise<EffectLog[]> {
+  const supabase = requireSupabase();
   const { data, error } = await supabase
     .from("sidekick_effect_logs")
     .select("id,occurred_at,severity,sidekick_effect_types(label,is_good)")
@@ -194,6 +203,7 @@ export async function listContextLogsBetween(
   startDate: string,
   endDate: string,
 ): Promise<ContextLog[]> {
+  const supabase = requireSupabase();
   const { data, error } = await supabase
     .from("sidekick_context_logs")
     .select("id,date,sleep_quality,ate_breakfast,caffeine,stress")
@@ -210,6 +220,7 @@ export async function createEffectLogs(
     severity: number | null;
   }[],
 ): Promise<void> {
+  const supabase = requireSupabase();
   const { error } = await supabase.from("sidekick_effect_logs").insert(
     rows.map((row) => ({
       effect_type_id: row.effect_type_id,
@@ -221,6 +232,7 @@ export async function createEffectLogs(
 }
 
 export async function deleteEffectLog(id: string): Promise<void> {
+  const supabase = requireSupabase();
   const { error } = await supabase
     .from("sidekick_effect_logs")
     .delete()
@@ -231,6 +243,7 @@ export async function deleteEffectLog(id: string): Promise<void> {
 export async function getContextForDay(
   dateStr: string,
 ): Promise<ContextLog | null> {
+  const supabase = requireSupabase();
   const { data, error } = await supabase
     .from("sidekick_context_logs")
     .select("id,date,sleep_quality,ate_breakfast,caffeine,stress")
@@ -245,6 +258,7 @@ export async function saveContextForDay(
   fields: ContextFields,
   existingId: string | null,
 ): Promise<void> {
+  const supabase = requireSupabase();
   const { error } = existingId
     ? await supabase
         .from("sidekick_context_logs")
@@ -260,6 +274,7 @@ export async function updateEffectType(
   id: string,
   patch: { label?: string; active?: boolean },
 ): Promise<void> {
+  const supabase = requireSupabase();
   const { error } = await supabase
     .from("sidekick_effect_types")
     .update(patch)

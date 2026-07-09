@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { requireSupabase } from "../lib/supabase";
 import { useSession } from "../hooks/useSession";
 import type { EffectType, Medication } from "../lib/db";
 import { createEffectTypes, createMedication, listEffectTypes, listMedications, toHm, updateEffectType, updateMedication } from "../lib/db";
@@ -283,7 +283,7 @@ export default function Settings() {
         <p className="text-sm text-ink-faint">Signed in as</p>
         <p className="font-bold">{session?.user.email}</p>
         <button
-          onClick={() => supabase.auth.signOut()}
+          onClick={() => requireSupabase().auth.signOut()}
           className="mt-4 rounded-xl border border-line px-4 py-2 text-sm text-ink-soft hover:border-line-strong hover:bg-canvas"
         >
           Sign out

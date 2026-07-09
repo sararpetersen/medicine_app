@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { NavLink, Navigate, Route, Routes } from "react-router-dom";
 import { useSession } from "./hooks/useSession";
 import { listMedications } from "./lib/db";
+import { supabaseConfigError } from "./lib/supabase";
 import Login from "./pages/Login";
 import History from "./pages/History";
 import Onboarding from "./pages/Onboarding";
@@ -107,6 +108,20 @@ function SetupGate() {
 
 export default function App() {
   const session = useSession();
+
+  if (supabaseConfigError) {
+    return (
+      <Splash>
+        <div className="max-w-sm">
+          <h1 className="text-xl font-bold text-ink">Bivi needs setup</h1>
+          <p className="mt-2">{supabaseConfigError}</p>
+          <p className="mt-2 text-sm">
+            Add these variables in Netlify, then redeploy the site.
+          </p>
+        </div>
+      </Splash>
+    );
+  }
 
   if (session === undefined) {
     return (

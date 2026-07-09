@@ -75,7 +75,20 @@ function SetupGate() {
 
   useEffect(check, [check]);
 
-  if (medCount === undefined) return <Splash>Bivi is waking up…</Splash>;
+  if (medCount === undefined) {
+    return (
+      <Splash>
+        <div>
+          <img
+            src="/bivi/bivi-sleeping.webp"
+            alt=""
+            className="mx-auto mb-2 h-24 w-24"
+          />
+          <p>Bivi is waking up…</p>
+        </div>
+      </Splash>
+    );
+  }
   if (medCount === "error") {
     return (
       <Splash>
@@ -95,7 +108,20 @@ function SetupGate() {
 export default function App() {
   const session = useSession();
 
-  if (session === undefined) return <Splash>Bivi is waking up…</Splash>;
+  if (session === undefined) {
+    return (
+      <Splash>
+        <div>
+          <img
+            src="/bivi/bivi-sleeping.webp"
+            alt=""
+            className="mx-auto mb-2 h-24 w-24"
+          />
+          <p>Bivi is waking up…</p>
+        </div>
+      </Splash>
+    );
+  }
   if (!session) return <Login />;
   return <SetupGate />;
 }

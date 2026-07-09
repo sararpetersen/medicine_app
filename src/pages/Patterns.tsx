@@ -57,7 +57,12 @@ export default function Patterns() {
     return (
       <div className="pt-8">
         <h1 className="text-2xl font-bold">Patterns</h1>
-        <div className="mt-6 rounded-2xl bg-accent-soft p-5">
+        <div className="mt-6 rounded-2xl bg-accent-soft p-5 text-center">
+          <img
+            src="/bivi/bivi-thinking.webp"
+            alt=""
+            className="mx-auto mb-3 h-24 w-24"
+          />
           <p className="text-sm text-accent">
             Patterns show up here once you've logged for a little while — even
             a few days is enough to start. No pressure, no deadline.

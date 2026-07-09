@@ -87,7 +87,12 @@ export default function Report() {
       </div>
 
       {effects.length === 0 && doses.length === 0 ? (
-        <div className="mt-6 rounded-2xl bg-accent-soft p-5">
+        <div className="mt-6 rounded-2xl bg-accent-soft p-5 text-center">
+          <img
+            src="/bivi/bivi-caring.webp"
+            alt=""
+            className="mx-auto mb-3 h-24 w-24"
+          />
           <p className="text-sm text-accent">
             The report builds itself from your logs — once there's data in
             this date range, it appears here ready to print.

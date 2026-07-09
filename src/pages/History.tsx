@@ -113,7 +113,12 @@ export default function History() {
       <h1 className="text-2xl font-bold">History</h1>
 
       {days.length === 0 ? (
-        <div className="mt-6 rounded-2xl bg-accent-soft p-5">
+        <div className="mt-6 rounded-2xl bg-accent-soft p-5 text-center">
+          <img
+            src="/bivi/bivi-writing.webp"
+            alt=""
+            className="mx-auto mb-3 h-24 w-24"
+          />
           <p className="text-sm text-accent">
             Nothing here yet. Once you log on the Today screen, your timeline
             grows on its own.

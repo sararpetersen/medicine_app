@@ -69,7 +69,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
     <div className="mx-auto min-h-dvh max-w-md px-5 pb-12">
       {step === "welcome" && (
         <div className="flex min-h-dvh flex-col items-center justify-center text-center">
-          <img src="/icon.svg" alt="" className="mb-4 h-16 w-16 rounded-2xl" />
+          <img src="/bivi/bivi-waving.webp" alt="" className="mb-3 h-32 w-32" />
           <h1 className="text-2xl font-bold">Hi, I'm Bivi</h1>
           <p className="mt-3 text-ink-soft">
             Setup takes about two minutes, and there are only two things to

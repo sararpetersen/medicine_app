@@ -332,9 +332,20 @@ function QuickLog({
         </div>
       )}
 
-      <p role="status" aria-live="polite" className="mt-3 text-sm text-good">
-        {confirmed ? "Logged. That's all — you're done." : " "}
-      </p>
+      <div role="status" aria-live="polite" className="mt-3 min-h-10">
+        {confirmed && (
+          <div className="flex items-center gap-2">
+            <img
+              src="/bivi/bivi-celebrating.webp"
+              alt=""
+              className="h-10 w-10"
+            />
+            <p className="text-sm text-good">
+              Logged. That's all — you're done.
+            </p>
+          </div>
+        )}
+      </div>
     </section>
   );
 }

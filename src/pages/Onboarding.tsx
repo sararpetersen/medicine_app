@@ -108,7 +108,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
           <p className="text-sm text-ink-faint">Step 2 of 2</p>
           <h1 className="mt-1 text-2xl font-bold">Your words for it</h1>
           <p className="mt-2 mb-6 text-ink-soft">
-            Pick the side effects you sometimes notice – these become your one-tap chips. Rename or change them anytime.
+            Pick the side effects you sometimes notice – these become your one-tap chips. Rename or change them anytime in settings.
           </p>
 
           <div className="flex flex-wrap gap-2">

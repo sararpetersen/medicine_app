@@ -1,6 +1,9 @@
+import { useCallback, useEffect, useState } from "react";
 import { NavLink, Navigate, Route, Routes } from "react-router-dom";
 import { useSession } from "./hooks/useSession";
+import { listMedications } from "./lib/db";
 import Login from "./pages/Login";
+import Onboarding from "./pages/Onboarding";
 import Settings from "./pages/Settings";
 import Placeholder from "./components/Placeholder";
 
@@ -79,16 +82,47 @@ function Shell() {
   );
 }
 
+function Splash({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex min-h-dvh items-center justify-center px-6 text-center text-ink-faint">
+      {children}
+    </div>
+  );
+}
+
+function SetupGate() {
+  const [medCount, setMedCount] = useState<number | "error" | undefined>();
+
+  const check = useCallback(() => {
+    setMedCount(undefined);
+    listMedications()
+      .then((meds) => setMedCount(meds.length))
+      .catch(() => setMedCount("error"));
+  }, []);
+
+  useEffect(check, [check]);
+
+  if (medCount === undefined) return <Splash>Sidekick is waking up…</Splash>;
+  if (medCount === "error") {
+    return (
+      <Splash>
+        <div>
+          <p>Couldn't reach your data.</p>
+          <button onClick={check} className="mt-3 text-accent">
+            Try again
+          </button>
+        </div>
+      </Splash>
+    );
+  }
+  if (medCount === 0) return <Onboarding onDone={check} />;
+  return <Shell />;
+}
+
 export default function App() {
   const session = useSession();
 
-  if (session === undefined) {
-    return (
-      <div className="flex min-h-dvh items-center justify-center text-ink-faint">
-        Sidekick is waking up…
-      </div>
-    );
-  }
+  if (session === undefined) return <Splash>Sidekick is waking up…</Splash>;
   if (!session) return <Login />;
-  return <Shell />;
+  return <SetupGate />;
 }

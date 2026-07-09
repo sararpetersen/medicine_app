@@ -78,6 +78,157 @@ export async function createEffectTypes(
   if (error) throw error;
 }
 
+export interface DoseLog {
+  id: string;
+  medication_id: string;
+  taken_at: string;
+  skipped: boolean;
+}
+
+export interface EffectLog {
+  id: string;
+  occurred_at: string;
+  severity: number | null;
+  label: string;
+  is_good: boolean;
+}
+
+export interface ContextLog {
+  id: string;
+  date: string;
+  sleep_quality: number | null;
+  ate_breakfast: boolean | null;
+  caffeine: boolean | null;
+  stress: number | null;
+}
+
+export type ContextFields = Omit<ContextLog, "id" | "date">;
+
+export function localDateString(date: Date = new Date()): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function dayRange(date: Date): [string, string] {
+  const start = new Date(date);
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(start);
+  end.setDate(end.getDate() + 1);
+  return [start.toISOString(), end.toISOString()];
+}
+
+export async function listDoseLogsForDay(date: Date): Promise<DoseLog[]> {
+  const [start, end] = dayRange(date);
+  const { data, error } = await supabase
+    .from("sidekick_dose_logs")
+    .select("id,medication_id,taken_at,skipped")
+    .gte("taken_at", start)
+    .lt("taken_at", end)
+    .order("taken_at");
+  if (error) throw error;
+  return data;
+}
+
+export async function createDoseLog(input: {
+  medication_id: string;
+  taken_at?: string;
+  skipped?: boolean;
+}): Promise<void> {
+  const { error } = await supabase.from("sidekick_dose_logs").insert({
+    medication_id: input.medication_id,
+    taken_at: input.taken_at ?? new Date().toISOString(),
+    skipped: input.skipped ?? false,
+  });
+  if (error) throw error;
+}
+
+export async function deleteDoseLog(id: string): Promise<void> {
+  const { error } = await supabase
+    .from("sidekick_dose_logs")
+    .delete()
+    .eq("id", id);
+  if (error) throw error;
+}
+
+export async function listEffectLogsForDay(date: Date): Promise<EffectLog[]> {
+  const [start, end] = dayRange(date);
+  const { data, error } = await supabase
+    .from("sidekick_effect_logs")
+    .select("id,occurred_at,severity,sidekick_effect_types(label,is_good)")
+    .gte("occurred_at", start)
+    .lt("occurred_at", end)
+    .order("occurred_at");
+  if (error) throw error;
+  return data.map((row) => {
+    const type = row.sidekick_effect_types as unknown as {
+      label: string;
+      is_good: boolean;
+    };
+    return {
+      id: row.id,
+      occurred_at: row.occurred_at,
+      severity: row.severity,
+      label: type.label,
+      is_good: type.is_good,
+    };
+  });
+}
+
+export async function createEffectLogs(
+  rows: {
+    effect_type_id: string;
+    occurred_at: string;
+    severity: number | null;
+  }[],
+): Promise<void> {
+  const { error } = await supabase.from("sidekick_effect_logs").insert(
+    rows.map((row) => ({
+      effect_type_id: row.effect_type_id,
+      occurred_at: row.occurred_at,
+      severity: row.severity,
+    })),
+  );
+  if (error) throw error;
+}
+
+export async function deleteEffectLog(id: string): Promise<void> {
+  const { error } = await supabase
+    .from("sidekick_effect_logs")
+    .delete()
+    .eq("id", id);
+  if (error) throw error;
+}
+
+export async function getContextForDay(
+  dateStr: string,
+): Promise<ContextLog | null> {
+  const { data, error } = await supabase
+    .from("sidekick_context_logs")
+    .select("id,date,sleep_quality,ate_breakfast,caffeine,stress")
+    .eq("date", dateStr)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+export async function saveContextForDay(
+  dateStr: string,
+  fields: ContextFields,
+  existingId: string | null,
+): Promise<void> {
+  const { error } = existingId
+    ? await supabase
+        .from("sidekick_context_logs")
+        .update(fields)
+        .eq("id", existingId)
+    : await supabase
+        .from("sidekick_context_logs")
+        .insert({ date: dateStr, ...fields });
+  if (error) throw error;
+}
+
 export async function updateEffectType(
   id: string,
   patch: { label?: string; active?: boolean },

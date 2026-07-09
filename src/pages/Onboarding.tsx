@@ -81,7 +81,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
           </p>
           <button
             onClick={() => setStep("medication")}
-            className="mt-8 w-full rounded-xl bg-accent px-4 py-3 font-bold text-white"
+            className="mt-8 w-full rounded-xl bg-accent px-4 py-3 font-bold text-white hover:bg-accent-deep"
           >
             Let's set up
           </button>
@@ -124,8 +124,8 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
                   aria-pressed={on}
                   className={`${chipBase} ${
                     on
-                      ? "border-accent bg-accent-soft font-bold text-accent"
-                      : "border-line bg-surface text-ink-soft"
+                      ? "border-accent bg-accent-soft font-bold text-accent hover:border-accent-deep"
+                      : "border-line bg-surface text-ink-soft hover:border-line-strong hover:bg-canvas"
                   }`}
                 >
                   {label}
@@ -149,7 +149,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
             />
             <button
               onClick={addCustom}
-              className="rounded-xl border border-line px-4 py-3 text-ink-soft"
+              className="rounded-xl border border-line px-4 py-3 text-ink-soft hover:border-line-strong hover:bg-surface"
             >
               Add
             </button>
@@ -169,7 +169,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
           <button
             onClick={finish}
             disabled={busy}
-            className="mt-6 w-full rounded-xl bg-accent px-4 py-3 font-bold text-white disabled:opacity-60"
+            className="mt-6 w-full rounded-xl bg-accent px-4 py-3 font-bold text-white hover:bg-accent-deep disabled:opacity-60"
           >
             {busy ? "Saving…" : "Finish setup"}
           </button>

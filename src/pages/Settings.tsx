@@ -71,7 +71,7 @@ function MedicationsSection() {
               <div className="flex gap-3 text-sm">
                 <button
                   onClick={() => setEditing(med.id)}
-                  className="text-accent"
+                  className="text-accent hover:underline"
                 >
                   Edit
                 </button>
@@ -80,7 +80,7 @@ function MedicationsSection() {
                     await updateMedication(med.id, { active: !med.active });
                     await load();
                   }}
-                  className="text-ink-faint"
+                  className="text-ink-faint hover:underline"
                 >
                   {med.active ? "Pause" : "Resume"}
                 </button>
@@ -104,7 +104,7 @@ function MedicationsSection() {
         ) : (
           <button
             onClick={() => setEditing("new")}
-            className="w-full rounded-2xl border border-dashed border-line px-4 py-3 text-sm text-ink-soft"
+            className="w-full rounded-2xl border border-dashed border-line px-4 py-3 text-sm text-ink-soft hover:border-line-strong hover:bg-surface"
           >
             + Add medication
           </button>
@@ -159,7 +159,7 @@ function ChipRow({
             await updateEffectType(chip.id, { active: !chip.active });
             await onChanged();
           }}
-          className="shrink-0 text-sm text-ink-faint"
+          className="shrink-0 text-sm text-ink-faint hover:underline"
         >
           {chip.active ? "Retire" : "Restore"}
         </button>
@@ -211,7 +211,7 @@ function ChipsSection() {
           />
           <button
             onClick={addChip}
-            className="rounded-xl border border-line px-4 py-2 text-sm text-ink-soft"
+            className="rounded-xl border border-line px-4 py-2 text-sm text-ink-soft hover:border-line-strong hover:bg-surface"
           >
             Add
           </button>
@@ -236,7 +236,7 @@ export default function Settings() {
         <p className="font-bold">{session?.user.email}</p>
         <button
           onClick={() => supabase.auth.signOut()}
-          className="mt-4 rounded-xl border border-line px-4 py-2 text-sm text-ink-soft"
+          className="mt-4 rounded-xl border border-line px-4 py-2 text-sm text-ink-soft hover:border-line-strong hover:bg-canvas"
         >
           Sign out
         </button>

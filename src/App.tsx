@@ -5,6 +5,7 @@ import { listMedications } from "./lib/db";
 import Login from "./pages/Login";
 import Onboarding from "./pages/Onboarding";
 import Settings from "./pages/Settings";
+import Today from "./pages/Today";
 import Placeholder from "./components/Placeholder";
 
 const tabs = [
@@ -20,15 +21,7 @@ function Shell() {
     <div className="mx-auto min-h-dvh max-w-md">
       <main className="px-5 pb-28">
         <Routes>
-          <Route
-            path="/"
-            element={
-              <Placeholder
-                title="Today"
-                description="Your dose check-in and quick side-effect log will live here — the 10-second loop."
-              />
-            }
-          />
+          <Route path="/" element={<Today />} />
           <Route
             path="/history"
             element={
@@ -69,7 +62,9 @@ function Shell() {
               end={tab.to === "/"}
               className={({ isActive }) =>
                 `px-3 py-4 text-sm ${
-                  isActive ? "font-bold text-accent" : "text-ink-faint"
+                  isActive
+                    ? "font-bold text-accent"
+                    : "text-ink-faint hover:text-ink-soft"
                 }`
               }
             >

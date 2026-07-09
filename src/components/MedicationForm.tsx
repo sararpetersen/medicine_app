@@ -103,7 +103,7 @@ export default function MedicationForm({
                 <button
                   type="button"
                   onClick={() => setTimes(times.filter((_, j) => j !== i))}
-                  className="rounded-xl border border-line px-3 py-3 text-sm text-ink-faint"
+                  className="rounded-xl border border-line px-3 py-3 text-sm text-ink-faint hover:border-line-strong hover:bg-canvas"
                 >
                   Remove
                 </button>
@@ -114,7 +114,7 @@ export default function MedicationForm({
         <button
           type="button"
           onClick={() => setTimes([...times, "14:00"])}
-          className="mt-2 text-sm text-accent"
+          className="mt-2 text-sm text-accent hover:underline"
         >
           + Add another time
         </button>
@@ -131,7 +131,7 @@ export default function MedicationForm({
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 rounded-xl border border-line px-4 py-3 text-ink-soft"
+            className="flex-1 rounded-xl border border-line px-4 py-3 text-ink-soft hover:border-line-strong hover:bg-canvas"
           >
             Cancel
           </button>
@@ -139,7 +139,7 @@ export default function MedicationForm({
         <button
           type="submit"
           disabled={busy}
-          className="flex-1 rounded-xl bg-accent px-4 py-3 font-bold text-white disabled:opacity-60"
+          className="flex-1 rounded-xl bg-accent px-4 py-3 font-bold text-white hover:bg-accent-deep disabled:opacity-60"
         >
           {busy ? "Saving…" : submitLabel}
         </button>

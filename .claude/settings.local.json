@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C \"/Users/sararingkow/Desktop/Hobbies/Coding/Side hustles/Neuro-medicine app/VS Code/medicine_app\" log --oneline -5)"
+    ]
+  }
+}

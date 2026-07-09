@@ -10,8 +10,8 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       manifest: {
-        name: "Sidekick",
-        short_name: "Sidekick",
+        name: "Bivi",
+        short_name: "Bivi",
         description:
           "Log medication side effects, spot patterns, bring real data to your doctor.",
         theme_color: "#F7F6F3",

@@ -6,9 +6,9 @@
   --color-ink: #3b3a36;
   --color-ink-soft: #6e6c66;
   --color-ink-faint: #9b998f;
-  --color-accent: #6b5ca5;
-  --color-accent-deep: #57488f;
-  --color-accent-soft: #edeaf6;
+  --color-accent: #96660d;
+  --color-accent-deep: #7a5309;
+  --color-accent-soft: #f7edd8;
   --color-on-accent: #ffffff;
   --color-good: #4a7c6f;
   --color-good-soft: #e4f0ec;
@@ -27,10 +27,10 @@ html.dark {
   --color-ink: #e9e7e1;
   --color-ink-soft: #b7b4aa;
   --color-ink-faint: #8b897f;
-  --color-accent: #a89ce0;
-  --color-accent-deep: #baafe9;
-  --color-accent-soft: #353046;
-  --color-on-accent: #14131c;
+  --color-accent: #e3b355;
+  --color-accent-deep: #ecc270;
+  --color-accent-soft: #403319;
+  --color-on-accent: #201804;
   --color-good: #8cc0ae;
   --color-good-soft: #26362f;
   --color-line: #3b3a36;

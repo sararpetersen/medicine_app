@@ -20,9 +20,9 @@ export default function Login() {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center px-6">
       <img src="/icon.svg" alt="" className="mb-4 h-16 w-16 rounded-2xl" />
-      <h1 className="text-2xl font-bold">Sidekick</h1>
+      <h1 className="text-2xl font-bold">Bivi</h1>
       <p className="mt-1 mb-8 text-center text-ink-soft">
-        Your side-effect logging companion
+        Your little side-effect sidekick
       </p>
 
       {status === "sent" ? (

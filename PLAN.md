@@ -1,6 +1,6 @@
-# Sidekick — v1 plan
+# Bivi — v1 plan
 
-*Sidekick*: a neurodivergent-friendly app for logging medication side effects, spotting patterns, and turning them into something useful to bring to your doctor. The name is a double meaning — it tracks side effects, and it's a friendly companion in your pocket.
+*Bivi* (from Danish *bivirkning*, side effect — and *bi*, bee): a neurodivergent-friendly app for logging medication side effects, spotting patterns, and turning them into something useful to bring to your doctor. Bivi is both the app and its mascot — a small honey-gold bee that keeps track of how your medicine feels. Brand accent: honey gold. (Working title was "Sidekick"; renamed 2026-07-09 because of Sidekick Health. Internal identifiers — `sidekick_*` tables, prefs key — keep the old name on purpose.)
 
 ## Design principles (the non-negotiables)
 
@@ -90,7 +90,7 @@ Milestone 3 is the point of the whole project — everything before it should be
 
 ## Launch checklist (only matters if Sidekick ever goes public)
 
-- **Rename the app** — "Sidekick" conflicts with Sidekick Health (same industry); pick a distinctive coined name and do a quick trademark search first.
+- **Trademark-check "Bivi"** — looked clear in app-store searches (2026-07-09), but do a proper EUIPO search before release.
 - **Privacy policy** — required before any public onboarding page; the app handles health data, so this is non-negotiable (GDPR applies).
 - **Health-app integration** (Apple Health etc.) needs a native wrapper (Capacitor) — a PWA cannot access HealthKit. Revisit if/when going native.
 - Move off the shared Supabase project onto a dedicated one.

@@ -164,7 +164,7 @@ export default function Report() {
             )}
 
             <p className="mt-4 text-xs text-ink-faint">
-              Self-reported via Sidekick. Severity scale: barely / annoying /
+              Self-reported via Bivi. Severity scale: barely / annoying /
               rough.
             </p>
           </div>

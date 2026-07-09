@@ -21,6 +21,7 @@ import {
   saveContextForDay,
   toHm,
 } from "../lib/db";
+import { usePrefs } from "../lib/prefs";
 
 const SEVERITIES = [
   { value: 1, label: "Barely" },
@@ -119,7 +120,7 @@ function DoseCard({
               setPickingTime(false);
               await onChanged();
             }}
-            className="rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white hover:bg-accent-deep"
+            className="rounded-xl bg-accent px-4 py-2 text-sm font-bold text-on-accent hover:bg-accent-deep"
           >
             Save
           </button>
@@ -137,7 +138,7 @@ function DoseCard({
               await createDoseLog({ medication_id: med.id });
               await onChanged();
             }}
-            className="flex-1 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white hover:bg-accent-deep"
+            className="flex-1 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-on-accent hover:bg-accent-deep"
           >
             Taken now
           </button>
@@ -166,14 +167,17 @@ function DoseCard({
 
 function QuickLog({
   types,
+  simplified,
   onLogged,
 }: {
   types: EffectType[];
+  simplified: boolean;
   onLogged: () => Promise<void>;
 }) {
   const [selected, setSelected] = useState<string[]>([]);
   const [severity, setSeverity] = useState<number | null>(null);
   const [earlier, setEarlier] = useState(false);
+  const [date, setDate] = useState(() => localDateString());
   const [time, setTime] = useState(() =>
     new Date().toTimeString().slice(0, 5),
   );
@@ -196,7 +200,7 @@ function QuickLog({
   async function logIt() {
     setBusy(true);
     try {
-      const when = earlier ? todayAt(time) : new Date();
+      const when = earlier ? new Date(`${date}T${time}`) : new Date();
       await createEffectLogs(
         selected.map((id) => ({
           effect_type_id: id,
@@ -243,7 +247,7 @@ function QuickLog({
         })}
       </div>
 
-      {hasBadSelection && (
+      {hasBadSelection && !simplified && (
         <div className="mt-4">
           <p className="text-sm text-ink-soft">
             How much is it bothering you?{" "}
@@ -294,22 +298,32 @@ function QuickLog({
                   : "text-ink-faint hover:underline"
               }
             >
-              Earlier today
+              Earlier
             </button>
             {earlier && (
-              <input
-                type="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                aria-label="When it happened"
-                className="rounded-lg border border-line bg-surface px-2 py-1 outline-none focus:border-accent"
-              />
+              <>
+                <input
+                  type="date"
+                  value={date}
+                  max={localDateString()}
+                  onChange={(e) => setDate(e.target.value)}
+                  aria-label="Which day it happened"
+                  className="rounded-lg border border-line bg-surface px-2 py-1 outline-none focus:border-accent"
+                />
+                <input
+                  type="time"
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                  aria-label="What time it happened"
+                  className="rounded-lg border border-line bg-surface px-2 py-1 outline-none focus:border-accent"
+                />
+              </>
             )}
           </div>
           <button
             onClick={logIt}
             disabled={busy}
-            className="w-full rounded-xl bg-accent px-4 py-3 font-bold text-white hover:bg-accent-deep disabled:opacity-60"
+            className="w-full rounded-xl bg-accent px-4 py-3 font-bold text-on-accent hover:bg-accent-deep disabled:opacity-60"
           >
             {busy ? "Logging…" : "Log it"}
           </button>
@@ -383,6 +397,7 @@ function ContextCard({
 }
 
 export default function Today() {
+  const { prefs } = usePrefs();
   const [meds, setMeds] = useState<Medication[]>([]);
   const [types, setTypes] = useState<EffectType[]>([]);
   const [doseLogs, setDoseLogs] = useState<DoseLog[]>([]);
@@ -437,7 +452,7 @@ export default function Today() {
         ))}
       </div>
 
-      <QuickLog types={types} onLogged={refresh} />
+      <QuickLog types={types} simplified={prefs.simplified} onLogged={refresh} />
 
       {effectLogs.length > 0 && (
         <section className="mt-8">
@@ -478,7 +493,9 @@ export default function Today() {
         </section>
       )}
 
-      <ContextCard context={context} onChanged={refresh} />
+      {!prefs.simplified && (
+        <ContextCard context={context} onChanged={refresh} />
+      )}
     </div>
   );
 }

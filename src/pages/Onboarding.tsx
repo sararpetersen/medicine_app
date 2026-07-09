@@ -81,7 +81,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
           </p>
           <button
             onClick={() => setStep("medication")}
-            className="mt-8 w-full rounded-xl bg-accent px-4 py-3 font-bold text-white hover:bg-accent-deep"
+            className="mt-8 w-full rounded-xl bg-accent px-4 py-3 font-bold text-on-accent hover:bg-accent-deep"
           >
             Let's set up
           </button>
@@ -169,7 +169,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
           <button
             onClick={finish}
             disabled={busy}
-            className="mt-6 w-full rounded-xl bg-accent px-4 py-3 font-bold text-white hover:bg-accent-deep disabled:opacity-60"
+            className="mt-6 w-full rounded-xl bg-accent px-4 py-3 font-bold text-on-accent hover:bg-accent-deep disabled:opacity-60"
           >
             {busy ? "Saving…" : "Finish setup"}
           </button>

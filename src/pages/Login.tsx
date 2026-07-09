@@ -45,7 +45,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={status === "sending"}
-            className="w-full rounded-xl bg-accent px-4 py-3 font-bold text-white hover:bg-accent-deep disabled:opacity-60"
+            className="w-full rounded-xl bg-accent px-4 py-3 font-bold text-on-accent hover:bg-accent-deep disabled:opacity-60"
           >
             {status === "sending" ? "Sending…" : "Email me a sign-in link"}
           </button>

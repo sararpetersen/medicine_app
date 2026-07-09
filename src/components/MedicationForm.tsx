@@ -139,7 +139,7 @@ export default function MedicationForm({
         <button
           type="submit"
           disabled={busy}
-          className="flex-1 rounded-xl bg-accent px-4 py-3 font-bold text-white hover:bg-accent-deep disabled:opacity-60"
+          className="flex-1 rounded-xl bg-accent px-4 py-3 font-bold text-on-accent hover:bg-accent-deep disabled:opacity-60"
         >
           {busy ? "Saving…" : submitLabel}
         </button>

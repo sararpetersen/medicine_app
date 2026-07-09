@@ -3,6 +3,7 @@ import { NavLink, Navigate, Route, Routes } from "react-router-dom";
 import { useSession } from "./hooks/useSession";
 import { listMedications } from "./lib/db";
 import Login from "./pages/Login";
+import History from "./pages/History";
 import Onboarding from "./pages/Onboarding";
 import Settings from "./pages/Settings";
 import Today from "./pages/Today";
@@ -22,15 +23,7 @@ function Shell() {
       <main className="px-5 pb-28">
         <Routes>
           <Route path="/" element={<Today />} />
-          <Route
-            path="/history"
-            element={
-              <Placeholder
-                title="History"
-                description="A calm timeline of everything you've logged, editable and retroactive-friendly."
-              />
-            }
-          />
+          <Route path="/history" element={<History />} />
           <Route
             path="/patterns"
             element={
@@ -54,14 +47,14 @@ function Shell() {
         </Routes>
       </main>
       <nav className="fixed inset-x-0 bottom-0 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]">
-        <div className="mx-auto flex max-w-md justify-around">
+        <div className="mx-auto flex max-w-md">
           {tabs.map((tab) => (
             <NavLink
               key={tab.to}
               to={tab.to}
               end={tab.to === "/"}
               className={({ isActive }) =>
-                `px-3 py-4 text-sm ${
+                `flex-1 px-1 py-4 text-center text-xs ${
                   isActive
                     ? "font-bold text-accent"
                     : "text-ink-faint hover:text-ink-soft"

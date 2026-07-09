@@ -12,6 +12,7 @@ import {
   updateMedication,
 } from "../lib/db";
 import MedicationForm from "../components/MedicationForm";
+import { usePrefs, type TextSize, type Theme } from "../lib/prefs";
 
 function describeDose(med: Medication): string {
   const dose =
@@ -221,6 +222,90 @@ function ChipsSection() {
   );
 }
 
+const TEXT_SIZES: { value: TextSize; label: string }[] = [
+  { value: "s", label: "S" },
+  { value: "m", label: "M" },
+  { value: "l", label: "L" },
+  { value: "xl", label: "XL" },
+];
+
+const THEMES: { value: Theme; label: string }[] = [
+  { value: "system", label: "System" },
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
+];
+
+function AccessibilitySection() {
+  const { prefs, setPref } = usePrefs();
+
+  const seg = (on: boolean) =>
+    `flex-1 rounded-xl border px-3 py-2 text-sm transition-colors ${
+      on
+        ? "border-accent bg-accent-soft font-bold text-accent"
+        : "border-line bg-surface text-ink-soft hover:border-line-strong hover:bg-canvas"
+    }`;
+
+  return (
+    <section className="mt-8">
+      <h2 className="font-bold">Accessibility</h2>
+      <div className="mt-3 space-y-4">
+        <div>
+          <p className="text-sm text-ink-soft">Text size</p>
+          <div className="mt-2 flex gap-2">
+            {TEXT_SIZES.map(({ value, label }) => (
+              <button
+                key={value}
+                onClick={() => setPref("textSize", value)}
+                aria-pressed={prefs.textSize === value}
+                className={seg(prefs.textSize === value)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <p className="text-sm text-ink-soft">Theme</p>
+          <div className="mt-2 flex gap-2">
+            {THEMES.map(({ value, label }) => (
+              <button
+                key={value}
+                onClick={() => setPref("theme", value)}
+                aria-pressed={prefs.theme === value}
+                className={seg(prefs.theme === value)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-line bg-surface p-4">
+          <div>
+            <p className="font-bold">Simplified logging</p>
+            <p className="text-sm text-ink-soft">
+              Just the chips — hides severity and daily context on Today.
+            </p>
+          </div>
+          <button
+            role="switch"
+            aria-checked={prefs.simplified}
+            onClick={() => setPref("simplified", !prefs.simplified)}
+            className={`shrink-0 rounded-full border px-4 py-2 text-sm transition-colors ${
+              prefs.simplified
+                ? "border-accent bg-accent-soft font-bold text-accent"
+                : "border-line bg-surface text-ink-soft hover:border-line-strong hover:bg-canvas"
+            }`}
+          >
+            {prefs.simplified ? "On" : "Off"}
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Settings() {
   const session = useSession();
 
@@ -230,6 +315,7 @@ export default function Settings() {
 
       <MedicationsSection />
       <ChipsSection />
+      <AccessibilitySection />
 
       <section className="mt-8 rounded-2xl border border-line bg-surface p-5">
         <p className="text-sm text-ink-faint">Signed in as</p>

@@ -119,16 +119,23 @@ function dayRange(date: Date): [string, string] {
   return [start.toISOString(), end.toISOString()];
 }
 
-export async function listDoseLogsForDay(date: Date): Promise<DoseLog[]> {
-  const [start, end] = dayRange(date);
+export async function listDoseLogsBetween(
+  start: Date,
+  end: Date,
+): Promise<DoseLog[]> {
   const { data, error } = await supabase
     .from("sidekick_dose_logs")
     .select("id,medication_id,taken_at,skipped")
-    .gte("taken_at", start)
-    .lt("taken_at", end)
+    .gte("taken_at", start.toISOString())
+    .lt("taken_at", end.toISOString())
     .order("taken_at");
   if (error) throw error;
   return data;
+}
+
+export async function listDoseLogsForDay(date: Date): Promise<DoseLog[]> {
+  const [start, end] = dayRange(date);
+  return listDoseLogsBetween(new Date(start), new Date(end));
 }
 
 export async function createDoseLog(input: {
@@ -152,13 +159,15 @@ export async function deleteDoseLog(id: string): Promise<void> {
   if (error) throw error;
 }
 
-export async function listEffectLogsForDay(date: Date): Promise<EffectLog[]> {
-  const [start, end] = dayRange(date);
+export async function listEffectLogsBetween(
+  start: Date,
+  end: Date,
+): Promise<EffectLog[]> {
   const { data, error } = await supabase
     .from("sidekick_effect_logs")
     .select("id,occurred_at,severity,sidekick_effect_types(label,is_good)")
-    .gte("occurred_at", start)
-    .lt("occurred_at", end)
+    .gte("occurred_at", start.toISOString())
+    .lt("occurred_at", end.toISOString())
     .order("occurred_at");
   if (error) throw error;
   return data.map((row) => {
@@ -174,6 +183,24 @@ export async function listEffectLogsForDay(date: Date): Promise<EffectLog[]> {
       is_good: type.is_good,
     };
   });
+}
+
+export async function listEffectLogsForDay(date: Date): Promise<EffectLog[]> {
+  const [start, end] = dayRange(date);
+  return listEffectLogsBetween(new Date(start), new Date(end));
+}
+
+export async function listContextLogsBetween(
+  startDate: string,
+  endDate: string,
+): Promise<ContextLog[]> {
+  const { data, error } = await supabase
+    .from("sidekick_context_logs")
+    .select("id,date,sleep_quality,ate_breakfast,caffeine,stress")
+    .gte("date", startDate)
+    .lte("date", endDate);
+  if (error) throw error;
+  return data;
 }
 
 export async function createEffectLogs(

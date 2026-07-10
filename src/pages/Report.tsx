@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useEntranceAnimations } from "../hooks/useEntranceAnimations";
 import type { ContextLog, DoseLog, EffectLog, Medication } from "../lib/db";
 import { listContextLogsBetween, listDoseLogsBetween, listEffectLogsBetween, listMedications, localDateString, toHm } from "../lib/db";
 import { contextInsights, severityWord, summarizeEffects } from "../lib/stats";
@@ -6,6 +7,7 @@ import { contextInsights, severityWord, summarizeEffects } from "../lib/stats";
 const RANGES = [14, 30, 90];
 
 export default function Report() {
+  const entranceRef = useRef<HTMLDivElement>(null);
   const [days, setDays] = useState(30);
   const [meds, setMeds] = useState<Medication[]>([]);
   const [doses, setDoses] = useState<DoseLog[]>([]);
@@ -36,6 +38,8 @@ export default function Report() {
     void refresh();
   }, [refresh]);
 
+  useEntranceAnimations(entranceRef, [loaded]);
+
   if (!loaded) {
     return <p className="pt-10 text-center text-ink-faint">One moment…</p>;
   }
@@ -54,7 +58,7 @@ export default function Report() {
   const rangeText = `${rangeStart.toLocaleDateString([], { day: "numeric", month: "short" })} – ${new Date().toLocaleDateString([], { day: "numeric", month: "short", year: "numeric" })}`;
 
   return (
-    <div className="pt-8">
+    <div ref={entranceRef} className="pt-8">
       <div className="no-print">
         <h1 className="text-2xl font-bold">Doctor report</h1>
         <p className="mt-1 text-sm text-ink-soft">A one-page summary for your next appointment. Print it or save it as a PDF.</p>

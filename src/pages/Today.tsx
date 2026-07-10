@@ -14,6 +14,7 @@ import {
   saveContextForDay,
 } from "../lib/db";
 import { usePrefs } from "../lib/prefs";
+import { useEntranceAnimations } from "../hooks/useEntranceAnimations";
 
 const SEVERITIES = [
   { value: 1, label: "Barely" },
@@ -64,15 +65,18 @@ function DoseCard({ med, logs, onChanged }: { med: Medication; logs: DoseLog[]; 
       {taken.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-2">
           {taken.map((log) => (
-            <span key={log.id} className="inline-flex items-center gap-1 rounded-full border border-line px-3 py-1 text-sm text-ink-soft">
+            <span
+              key={log.id}
+              className="relative inline-flex min-h-9 items-center rounded-full border border-line py-1 pr-10 pl-3 text-sm text-ink-soft"
+            >
               {fmtTime(log.taken_at)}
               <button
                 onClick={async () => {
                   await deleteDoseLog(log.id);
                   await onChanged();
                 }}
-                aria-label={`Remove dose logged at ${fmtTime(log.taken_at)}`}
-                className="-my-2 ml-0.5 inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-ink-faint hover:bg-canvas hover:text-ink"
+                aria-label={`Delete dose logged at ${fmtTime(log.taken_at)}`}
+                className="absolute inset-y-0 right-0 inline-flex w-9 items-center justify-center rounded-r-full text-base leading-none text-ink-faint hover:bg-canvas hover:text-ink"
               >
                 ×
               </button>
@@ -113,10 +117,7 @@ function DoseCard({ med, logs, onChanged }: { med: Medication; logs: DoseLog[]; 
       ) : allLogged && !loggingExtra ? (
         <div className="mt-3 flex items-center justify-between gap-2">
           <p className="text-sm text-good">All doses logged for today.</p>
-          <button
-            onClick={() => setLoggingExtra(true)}
-            className="shrink-0 text-sm text-ink-faint hover:underline"
-          >
+          <button onClick={() => setLoggingExtra(true)} className="shrink-0 text-sm text-ink-faint hover:underline">
             Log an extra dose
           </button>
         </div>
@@ -202,7 +203,7 @@ function QuickLog({ types, simplified, onLogged }: { types: EffectType[]; simpli
   return (
     <section className="mt-8">
       <h2 className="font-bold">How's it feeling right now?</h2>
-      <p className="mt-1 text-sm text-ink-faint">Tap anything that fits — or nothing at all.</p>
+      <p className="mt-1 text-sm text-ink-faint">Tap anything that fits – or nothing at all. It's okay to skip.</p>
 
       <div className="mt-3 flex flex-wrap gap-2">
         {active.map((t) => {
@@ -224,7 +225,7 @@ function QuickLog({ types, simplified, onLogged }: { types: EffectType[]; simpli
         })}
       </div>
 
-      {hasBadSelection && !simplified && (
+      {!simplified && hasBadSelection && (
         <div className="mt-4">
           <p className="text-sm text-ink-soft">
             How much is it bothering you? <span className="text-ink-faint">(optional)</span>
@@ -234,8 +235,9 @@ function QuickLog({ types, simplified, onLogged }: { types: EffectType[]; simpli
               <button
                 key={s.value}
                 onClick={() => setSeverity(severity === s.value ? null : s.value)}
+                disabled={!hasBadSelection}
                 aria-pressed={severity === s.value}
-                className={`flex-1 rounded-xl border px-3 py-2 text-sm transition-colors ${
+                className={`flex-1 rounded-xl border px-3 py-2 text-sm transition-colors disabled:cursor-not-allowed ${
                   severity === s.value
                     ? "border-accent bg-accent-soft font-bold text-accent"
                     : "border-line bg-surface text-ink-soft hover:border-line-strong hover:bg-canvas"
@@ -309,7 +311,7 @@ function QuickLog({ types, simplified, onLogged }: { types: EffectType[]; simpli
 }
 
 const CONTEXT_TOGGLES: {
-  key: keyof ContextFields;
+  key: Exclude<keyof ContextFields, "other_text">;
   label: string;
   onValue: number | boolean;
 }[] = [
@@ -317,20 +319,44 @@ const CONTEXT_TOGGLES: {
   { key: "ate_breakfast", label: "Ate breakfast", onValue: true },
   { key: "caffeine", label: "Caffeine", onValue: true },
   { key: "stress", label: "Stressful day", onValue: 3 },
+  { key: "other", label: "Other context", onValue: true },
 ];
 
 function ContextCard({ context, onChanged }: { context: ContextLog | null; onChanged: () => Promise<void> }) {
+  const [otherText, setOtherText] = useState(context?.other_text ?? "");
+  const [savingOther, setSavingOther] = useState(false);
+
+  useEffect(() => setOtherText(context?.other_text ?? ""), [context?.other_text]);
+
   const fields: ContextFields = {
     sleep_quality: context?.sleep_quality ?? null,
     ate_breakfast: context?.ate_breakfast ?? null,
     caffeine: context?.caffeine ?? null,
     stress: context?.stress ?? null,
+    other: context?.other ?? null,
+    other_text: context?.other_text ?? null,
   };
 
-  async function toggle(key: keyof ContextFields, onValue: number | boolean) {
-    const next = { ...fields, [key]: fields[key] == null ? onValue : null };
+  async function toggle(key: Exclude<keyof ContextFields, "other_text">, onValue: number | boolean) {
+    const turningOff = fields[key] != null;
+    const next = {
+      ...fields,
+      [key]: turningOff ? null : onValue,
+      ...(key === "other" && turningOff ? { other_text: null } : {}),
+    };
+    if (key === "other" && turningOff) setOtherText("");
     await saveContextForDay(localDateString(), next, context?.id ?? null);
     await onChanged();
+  }
+
+  async function saveOtherText() {
+    setSavingOther(true);
+    try {
+      await saveContextForDay(localDateString(), { ...fields, other: true, other_text: otherText.trim() || null }, context?.id ?? null);
+      await onChanged();
+    } finally {
+      setSavingOther(false);
+    }
   }
 
   return (
@@ -355,11 +381,38 @@ function ContextCard({ context, onChanged }: { context: ContextLog | null; onCha
           );
         })}
       </div>
+      {fields.other && (
+        <div className="mt-3 rounded-2xl border border-line bg-surface p-3">
+          <label htmlFor="other-context" className="text-sm text-ink-soft">
+            What else affected your day?
+          </label>
+          <textarea
+            id="other-context"
+            value={otherText}
+            maxLength={200}
+            rows={2}
+            placeholder="Add a short note…"
+            onChange={(event) => setOtherText(event.target.value)}
+            className="mt-2 w-full resize-none rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:border-accent"
+          />
+          <div className="mt-2 flex items-center justify-between gap-3">
+            <span className="text-xs text-ink-faint">{otherText.length}/200</span>
+            <button
+              onClick={() => void saveOtherText()}
+              disabled={savingOther || otherText.trim() === (context?.other_text ?? "")}
+              className="rounded-xl bg-accent px-4 py-2 text-sm font-bold text-on-accent hover:bg-accent-deep disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {savingOther ? "Saving…" : "Save note"}
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
 
 export default function Today() {
+  const entranceRef = useRef<HTMLDivElement>(null);
   const { prefs } = usePrefs();
   const [meds, setMeds] = useState<Medication[]>([]);
   const [types, setTypes] = useState<EffectType[]>([]);
@@ -367,22 +420,30 @@ export default function Today() {
   const [effectLogs, setEffectLogs] = useState<EffectLog[]>([]);
   const [context, setContext] = useState<ContextLog | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
-    const today = new Date();
-    const [m, t, d, e, c] = await Promise.all([
-      listMedications(),
-      listEffectTypes(),
-      listDoseLogsForDay(today),
-      listEffectLogsForDay(today),
-      getContextForDay(localDateString(today)),
-    ]);
-    setMeds(m.filter((x) => x.active));
-    setTypes(t);
-    setDoseLogs(d);
-    setEffectLogs(e);
-    setContext(c);
-    setLoaded(true);
+    try {
+      setLoadError(null);
+      const today = new Date();
+      const [m, t, d, e, c] = await Promise.all([
+        listMedications(),
+        listEffectTypes(),
+        listDoseLogsForDay(today),
+        listEffectLogsForDay(today),
+        getContextForDay(localDateString(today)),
+      ]);
+      setMeds(m.filter((x) => x.active));
+      setTypes(t);
+      setDoseLogs(d);
+      setEffectLogs(e);
+      setContext(c);
+    } catch (error) {
+      console.error("Couldn't load Today", error);
+      setLoadError("Bivi couldn't load today's data. If Other context was just added, apply the latest Supabase migration and try again.");
+    } finally {
+      setLoaded(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -395,14 +456,35 @@ export default function Today() {
     month: "long",
   });
 
+  useEntranceAnimations(entranceRef, [loaded]);
+
   if (!loaded) {
     return <p className="pt-10 text-center text-ink-faint">One moment…</p>;
   }
 
+  if (loadError) {
+    return (
+      <div className="pt-10 text-center">
+        <img src="/bivi/bivi-caring.webp" alt="" className="mx-auto mb-3 h-24 w-24" />
+        <p role="alert" className="text-ink-soft">
+          {loadError}
+        </p>
+        <button onClick={() => void refresh()} className="mt-4 rounded-xl bg-accent px-4 py-3 font-bold text-on-accent hover:bg-accent-deep">
+          Try again
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="pt-8">
-      <p className="text-sm text-ink-faint">{heading}</p>
-      <h1 className="mt-1 text-2xl font-bold">Today</h1>
+    <div ref={entranceRef} className="pt-8">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className="text-sm text-ink-faint">{heading}</p>
+          <h1 className="mt-1 text-2xl font-bold">{prefs.username.trim() ? `Hi, ${prefs.username.trim()}` : "Today"}</h1>
+        </div>
+        {prefs.profilePhoto && <img src={prefs.profilePhoto} alt="" className="h-12 w-12 rounded-full object-cover" />}
+      </div>
 
       <div className="mt-4 space-y-3">
         {meds.map((med) => (

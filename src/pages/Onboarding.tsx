@@ -1,33 +1,30 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useEntranceAnimations } from "../hooks/useEntranceAnimations";
 import type { MedicationInput } from "../lib/db";
 import { createEffectTypes, createMedication } from "../lib/db";
 import MedicationForm from "../components/MedicationForm";
 
 const SUGGESTED_CHIPS = [
   "No appetite",
-  "Restless or jittery",
+  "Restless/jittery",
   "Headache",
   "Dry mouth",
   "Heart racing",
   "Trouble sleeping",
   "Overstimulated",
-  "Low mood or crash",
+  "Low mood/crashing",
   "Nausea",
   "Irritable",
-  "Dizzy or lightheaded",
-  "Tired or fatigued",
   "Anxious or nervous",
-  "Sweaty",
-  "Tingling or numbness",
-  "Stomach pain",
-  "Diarrhea",
-  "Constipation",
+  "Dizzy/lightheaded",
+  "Tired/fatigued",
   "Other",
 ];
 
 type Step = "welcome" | "medication" | "chips";
 
 export default function Onboarding({ onDone }: { onDone: () => void }) {
+  const entranceRef = useRef<HTMLDivElement>(null);
   const [step, setStep] = useState<Step>("welcome");
   const [medication, setMedication] = useState<MedicationInput | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
@@ -35,6 +32,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
   const [draft, setDraft] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
+  useEntranceAnimations(entranceRef, [step]);
 
   function toggle(label: string) {
     setSelected((prev) => (prev.includes(label) ? prev.filter((l) => l !== label) : [...prev, label]));
@@ -69,17 +67,22 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
   const chipBase = "rounded-full border px-4 py-2 text-sm transition-colors";
 
   return (
-    <div className="mx-auto min-h-dvh max-w-md px-5 pb-12">
+    <div ref={entranceRef} className="mx-auto min-h-dvh max-w-md px-5 pb-12">
       {step === "welcome" && (
-        <div className="fade-in-up flex min-h-dvh flex-col items-center justify-center text-center">
-          <img src="/bivi/bivi-waving.webp" alt="" className="mb-3 h-32 w-32" />
-          <h1 className="text-2xl font-bold">Hi, I'm Bivi!</h1>
-          <p className="mt-3 text-ink-soft">
+        <div className="flex min-h-dvh flex-col items-center justify-center text-center">
+          <img data-entrance-item src="/bivi/bivi-waving.webp" alt="" className="mb-3 h-32 w-32" />
+          <h1 data-entrance-item className="text-2xl font-bold">
+            Hi, I'm Bivi!
+          </h1>
+          <p data-entrance-item className="mt-3 text-ink-soft">
             Setup takes about two minutes, and there are only two things to tell me: which medication you take, and your own words for how it
             sometimes feels.
           </p>
-          <p className="mt-2 text-sm text-ink-faint">Everything can be changed later in settings.</p>
+          <p data-entrance-item className="mt-2 text-sm text-ink-faint">
+            Everything can be changed later in settings.
+          </p>
           <button
+            data-entrance-item
             onClick={() => setStep("medication")}
             className="mt-8 w-full rounded-xl bg-accent px-4 py-3 font-bold text-on-accent hover:bg-accent-deep"
           >
@@ -89,29 +92,41 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
       )}
 
       {step === "medication" && (
-        <div className="fade-in-up pt-10">
-          <p className="text-sm text-ink-faint">Step 1 of 2</p>
-          <h1 className="mt-1 text-2xl font-bold">Your medication</h1>
-          <p className="mt-2 mb-6 text-ink-soft">More medications can be added later in settings.</p>
-          <MedicationForm
-            submitLabel="Next"
-            onSave={async (input) => {
-              setMedication(input);
-              setStep("chips");
-            }}
-          />
+        <div className="pt-10">
+          <p data-entrance-item className="text-sm text-ink-faint">
+            Step 1 of 2
+          </p>
+          <h1 data-entrance-item className="mt-1 text-2xl font-bold">
+            Your medication
+          </h1>
+          <p data-entrance-item className="mt-2 mb-6 text-ink-soft">
+            More medications can be added later in settings.
+          </p>
+          <div data-entrance-item>
+            <MedicationForm
+              submitLabel="Next"
+              onSave={async (input) => {
+                setMedication(input);
+                setStep("chips");
+              }}
+            />
+          </div>
         </div>
       )}
 
       {step === "chips" && (
-        <div className="fade-in-up pt-10">
-          <p className="text-sm text-ink-faint">Step 2 of 2</p>
-          <h1 className="mt-1 text-2xl font-bold">Your words for it</h1>
-          <p className="mt-2 mb-6 text-ink-soft">
+        <div className="pt-10">
+          <p data-entrance-item className="text-sm text-ink-faint">
+            Step 2 of 2
+          </p>
+          <h1 data-entrance-item className="mt-1 text-2xl font-bold">
+            Your words for it
+          </h1>
+          <p data-entrance-item className="mt-2 mb-6 text-ink-soft">
             Pick the side effects you sometimes notice – these become your one-tap chips. Rename or change them anytime in settings.
           </p>
 
-          <div className="flex flex-wrap gap-2">
+          <div data-entrance-item className="flex flex-wrap gap-2">
             {[...SUGGESTED_CHIPS, ...customChips].map((label) => {
               const on = selected.includes(label);
               return (
@@ -131,7 +146,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
             })}
           </div>
 
-          <div className="mt-4 flex gap-2">
+          <div data-entrance-item className="mt-4 flex gap-2">
             <input
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
@@ -150,13 +165,18 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
             </button>
           </div>
 
-          <p className="mt-4 text-sm text-ink-faint">
+          <p data-entrance-item className="mt-4 text-sm text-ink-faint">
             An <em>"Actually fine"</em> chip is included automatically – good days count too.
           </p>
 
-          {error && <p role="alert" className="mt-3 text-sm text-red-700">Couldn't save your setup. Check your connection and try again.</p>}
+          {error && (
+            <p role="alert" className="mt-3 text-sm text-red-700">
+              Couldn't save your setup. Check your connection and try again.
+            </p>
+          )}
 
           <button
+            data-entrance-item
             onClick={finish}
             disabled={busy}
             className="mt-6 w-full rounded-xl bg-accent px-4 py-3 font-bold text-on-accent hover:bg-accent-deep disabled:opacity-60"

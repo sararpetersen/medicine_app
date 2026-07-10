@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { NavLink, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useSession } from "./hooks/useSession";
 import { listMedications } from "./lib/db";
@@ -10,6 +10,7 @@ import Patterns from "./pages/Patterns";
 import Report from "./pages/Report";
 import Settings from "./pages/Settings";
 import Today from "./pages/Today";
+import { useEntranceAnimations } from "./hooks/useEntranceAnimations";
 
 const tabs = [
   { to: "/", label: "Today" },
@@ -22,9 +23,7 @@ const tabs = [
 function TitleUpdater() {
   const { pathname } = useLocation();
   useEffect(() => {
-    const tab = tabs.find((t) =>
-      t.to === "/" ? pathname === "/" : pathname.startsWith(t.to),
-    );
+    const tab = tabs.find((t) => (t.to === "/" ? pathname === "/" : pathname.startsWith(t.to)));
     document.title = tab && tab.to !== "/" ? `${tab.label} — Bivi` : "Bivi";
   }, [pathname]);
   return null;
@@ -40,15 +39,8 @@ function Shell() {
         Skip to content
       </a>
       <TitleUpdater />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-x-0 bottom-20 z-0 flex justify-center"
-      >
-        <img
-          src="/bivi/bivi-illustration.webp"
-          alt=""
-          className="w-80 max-w-[70vw] opacity-[0.06]"
-        />
+      <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 bottom-20 z-0 flex justify-center">
+        <img src="/bivi/bivi-illustration.webp" alt="" className="w-80 max-w-[70vw] opacity-[0.06]" />
       </div>
       <main id="main" className="relative z-10 px-5 pb-28">
         <Routes>
@@ -60,7 +52,7 @@ function Shell() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
-      <nav className="fixed inset-x-0 bottom-0 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]">
+      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]">
         <div className="mx-auto flex max-w-md">
           {tabs.map((tab) => (
             <NavLink
@@ -68,11 +60,7 @@ function Shell() {
               to={tab.to}
               end={tab.to === "/"}
               className={({ isActive }) =>
-                `flex-1 px-1 py-4 text-center text-xs ${
-                  isActive
-                    ? "font-bold text-accent"
-                    : "text-ink-faint hover:text-ink-soft"
-                }`
+                `flex-1 px-1 py-4 text-center text-xs ${isActive ? "font-bold text-accent" : "text-ink-faint hover:text-ink-soft"}`
               }
             >
               {tab.label}
@@ -85,11 +73,9 @@ function Shell() {
 }
 
 function Splash({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex min-h-dvh items-center justify-center px-6 text-center text-ink-faint">
-      {children}
-    </div>
-  );
+  const entranceRef = useRef<HTMLDivElement>(null);
+  useEntranceAnimations(entranceRef);
+  return <div ref={entranceRef} className="flex min-h-dvh items-center justify-center px-6 text-center text-ink-faint">{children}</div>;
 }
 
 function SetupGate() {
@@ -108,11 +94,7 @@ function SetupGate() {
     return (
       <Splash>
         <div>
-          <img
-            src="/bivi/bivi-sleeping.webp"
-            alt=""
-            className="mx-auto mb-2 h-24 w-24"
-          />
+          <img src="/bivi/bivi-sleeping.webp" alt="" className="mx-auto mb-2 h-24 w-24" />
           <p>Bivi is waking up…</p>
         </div>
       </Splash>
@@ -143,9 +125,7 @@ export default function App() {
         <div className="max-w-sm">
           <h1 className="text-xl font-bold text-ink">Bivi needs setup</h1>
           <p className="mt-2">{supabaseConfigError}</p>
-          <p className="mt-2 text-sm">
-            Add these variables in Netlify, then redeploy the site.
-          </p>
+          <p className="mt-2 text-sm">Add these variables in Netlify, then redeploy the site.</p>
         </div>
       </Splash>
     );
@@ -155,11 +135,7 @@ export default function App() {
     return (
       <Splash>
         <div>
-          <img
-            src="/bivi/bivi-sleeping.webp"
-            alt=""
-            className="mx-auto mb-2 h-24 w-24"
-          />
+          <img src="/bivi/bivi-sleeping.webp" alt="" className="mx-auto mb-2 h-24 w-24" />
           <p>Bivi is waking up…</p>
         </div>
       </Splash>

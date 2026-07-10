@@ -8,13 +8,15 @@ import {
 
 export type TextSize = "s" | "m" | "l" | "xl";
 export type Theme = "system" | "light" | "dark";
-export type FontChoice = "hyperlegible" | "opendyslexic" | "system";
+export type FontChoice = "hyperlegible" | "system";
 
 export interface Prefs {
   textSize: TextSize;
   theme: Theme;
   simplified: boolean;
   font: FontChoice;
+  username: string;
+  profilePhoto: string | null;
 }
 
 const DEFAULTS: Prefs = {
@@ -22,6 +24,8 @@ const DEFAULTS: Prefs = {
   theme: "system",
   simplified: false,
   font: "hyperlegible",
+  username: "",
+  profilePhoto: null,
 };
 const STORAGE_KEY = "sidekick-prefs";
 const FONT_SIZES: Record<TextSize, string> = {
@@ -32,13 +36,14 @@ const FONT_SIZES: Record<TextSize, string> = {
 };
 export const FONT_STACKS: Record<FontChoice, string> = {
   hyperlegible: '"Atkinson Hyperlegible", system-ui, sans-serif',
-  opendyslexic: '"OpenDyslexic", "Atkinson Hyperlegible", system-ui, sans-serif',
   system: "system-ui, sans-serif",
 };
 
 function loadPrefs(): Prefs {
   try {
-    return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}") };
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}") as Omit<Partial<Prefs>, "font"> & { font?: string };
+    if (saved.font === "opendyslexic") saved.font = "hyperlegible";
+    return { ...DEFAULTS, ...saved } as Prefs;
   } catch {
     return DEFAULTS;
   }

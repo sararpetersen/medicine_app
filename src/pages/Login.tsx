@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useEntranceAnimations } from "../hooks/useEntranceAnimations";
 import { requireSupabase } from "../lib/supabase";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
 export default function Login() {
+  const entranceRef = useRef<HTMLDivElement>(null);
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
+  useEntranceAnimations(entranceRef, [status === "sent"]);
 
   async function sendLink(e: React.FormEvent) {
     e.preventDefault();
@@ -18,7 +21,7 @@ export default function Login() {
   }
 
   return (
-    <div className="fade-in-up flex min-h-dvh flex-col items-center justify-center px-6">
+    <div ref={entranceRef} className="flex min-h-dvh flex-col items-center justify-center px-6">
       <img src="/bivi/bivi-logo.webp" alt="" className="mb-3 h-28 w-28" />
       <h1 className="text-2xl font-bold">Bivi</h1>
       <p className="mt-1 mb-8 text-center text-ink-soft">Your little side-effect sidekick</p>

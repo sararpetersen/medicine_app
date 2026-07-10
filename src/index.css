@@ -57,19 +57,8 @@ body {
   }
 }
 
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(1rem);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.fade-in-up {
-  animation: fade-in-up 1s both;
+.entrance-pending {
+  opacity: 0;
 }
 
 @media print {
@@ -91,5 +80,8 @@ body {
   *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+  }
+  .entrance-pending {
+    opacity: 1;
   }
 }

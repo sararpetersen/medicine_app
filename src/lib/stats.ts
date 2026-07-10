@@ -143,6 +143,7 @@ const CONTEXT_FLAGS: {
   { label: "caffeine days", test: (c) => c.caffeine === true },
   { label: "breakfast days", test: (c) => c.ate_breakfast === true },
   { label: "stressful days", test: (c) => c.stress != null },
+  { label: "other-context days", test: (c) => c.other === true },
 ];
 
 export function contextInsights(

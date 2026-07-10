@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useEntranceAnimations } from "../hooks/useEntranceAnimations";
 import type { ContextLog, DoseLog, EffectLog, Medication } from "../lib/db";
 import {
   deleteDoseLog,
@@ -41,6 +42,7 @@ function contextChips(ctx: ContextLog): string[] {
   if (ctx.ate_breakfast) chips.push("breakfast");
   if (ctx.caffeine) chips.push("caffeine");
   if (ctx.stress != null) chips.push("stressful day");
+  if (ctx.other) chips.push(ctx.other_text ? `other: ${ctx.other_text}` : "other context");
   return chips;
 }
 
@@ -52,6 +54,7 @@ interface DayGroup {
 }
 
 export default function History() {
+  const entranceRef = useRef<HTMLDivElement>(null);
   const [daysBack, setDaysBack] = useState(14);
   const [meds, setMeds] = useState<Medication[]>([]);
   const [days, setDays] = useState<DayGroup[]>([]);
@@ -101,12 +104,14 @@ export default function History() {
 
   const medName = (id: string) => meds.find((m) => m.id === id)?.name ?? "Medication";
 
+  useEntranceAnimations(entranceRef, [loaded]);
+
   if (!loaded) {
     return <p className="pt-10 text-center text-ink-faint">One moment…</p>;
   }
 
   return (
-    <div className="pt-8">
+    <div ref={entranceRef} className="pt-8">
       <h1 className="text-2xl font-bold">History</h1>
 
       {days.length === 0 ? (

@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useEntranceAnimations } from "../hooks/useEntranceAnimations";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import type { ContextLog, DoseLog, EffectLog } from "../lib/db";
 import { listContextLogsBetween, listDoseLogsBetween, listEffectLogsBetween, localDateString } from "../lib/db";
@@ -7,6 +8,7 @@ import { contextInsights, summarizeEffects, timingHistogram } from "../lib/stats
 const DAYS = 30;
 
 export default function Patterns() {
+  const entranceRef = useRef<HTMLDivElement>(null);
   const [doses, setDoses] = useState<DoseLog[]>([]);
   const [effects, setEffects] = useState<EffectLog[]>([]);
   const [contexts, setContexts] = useState<ContextLog[]>([]);
@@ -34,13 +36,15 @@ export default function Patterns() {
     void refresh();
   }, [refresh]);
 
+  useEntranceAnimations(entranceRef, [loaded]);
+
   if (!loaded) {
     return <p className="pt-10 text-center text-ink-faint">One moment…</p>;
   }
 
   if (effects.length === 0) {
     return (
-      <div className="pt-8">
+      <div ref={entranceRef} className="pt-8">
         <h1 className="text-2xl font-bold">Patterns</h1>
         <div className="mt-6 rounded-2xl bg-accent-soft p-5 text-center">
           <img src="/bivi/bivi-thinking.webp" alt="" className="mx-auto mb-3 h-24 w-24" />
@@ -69,7 +73,7 @@ export default function Patterns() {
     }`;
 
   return (
-    <div className="pt-8">
+    <div ref={entranceRef} className="pt-8">
       <h1 className="text-2xl font-bold">Patterns</h1>
       <p className="mt-1 text-sm text-ink-faint">Last {DAYS} days.</p>
 

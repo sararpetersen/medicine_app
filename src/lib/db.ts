@@ -45,15 +45,9 @@ export async function createMedication(input: MedicationInput): Promise<void> {
   if (error) throw error;
 }
 
-export async function updateMedication(
-  id: string,
-  patch: Partial<MedicationInput> & { active?: boolean },
-): Promise<void> {
+export async function updateMedication(id: string, patch: Partial<MedicationInput> & { active?: boolean }): Promise<void> {
   const supabase = requireSupabase();
-  const { error } = await supabase
-    .from("sidekick_medications")
-    .update(patch)
-    .eq("id", id);
+  const { error } = await supabase.from("sidekick_medications").update(patch).eq("id", id);
   if (error) throw error;
 }
 
@@ -68,9 +62,7 @@ export async function listEffectTypes(): Promise<EffectType[]> {
   return data;
 }
 
-export async function createEffectTypes(
-  inputs: { label: string; is_good?: boolean; sort_order?: number }[],
-): Promise<void> {
+export async function createEffectTypes(inputs: { label: string; is_good?: boolean; sort_order?: number }[]): Promise<void> {
   const supabase = requireSupabase();
   // Bulk inserts must have uniform keys per row, or Postgres receives
   // explicit nulls instead of column defaults.
@@ -105,6 +97,8 @@ export interface ContextLog {
   ate_breakfast: boolean | null;
   caffeine: boolean | null;
   stress: number | null;
+  other: boolean | null;
+  other_text: string | null;
 }
 
 export type ContextFields = Omit<ContextLog, "id" | "date">;
@@ -124,10 +118,7 @@ function dayRange(date: Date): [string, string] {
   return [start.toISOString(), end.toISOString()];
 }
 
-export async function listDoseLogsBetween(
-  start: Date,
-  end: Date,
-): Promise<DoseLog[]> {
+export async function listDoseLogsBetween(start: Date, end: Date): Promise<DoseLog[]> {
   const supabase = requireSupabase();
   const { data, error } = await supabase
     .from("sidekick_dose_logs")
@@ -144,11 +135,7 @@ export async function listDoseLogsForDay(date: Date): Promise<DoseLog[]> {
   return listDoseLogsBetween(new Date(start), new Date(end));
 }
 
-export async function createDoseLog(input: {
-  medication_id: string;
-  taken_at?: string;
-  skipped?: boolean;
-}): Promise<void> {
+export async function createDoseLog(input: { medication_id: string; taken_at?: string; skipped?: boolean }): Promise<void> {
   const supabase = requireSupabase();
   const { error } = await supabase.from("sidekick_dose_logs").insert({
     medication_id: input.medication_id,
@@ -160,17 +147,11 @@ export async function createDoseLog(input: {
 
 export async function deleteDoseLog(id: string): Promise<void> {
   const supabase = requireSupabase();
-  const { error } = await supabase
-    .from("sidekick_dose_logs")
-    .delete()
-    .eq("id", id);
+  const { error } = await supabase.from("sidekick_dose_logs").delete().eq("id", id);
   if (error) throw error;
 }
 
-export async function listEffectLogsBetween(
-  start: Date,
-  end: Date,
-): Promise<EffectLog[]> {
+export async function listEffectLogsBetween(start: Date, end: Date): Promise<EffectLog[]> {
   const supabase = requireSupabase();
   const { data, error } = await supabase
     .from("sidekick_effect_logs")
@@ -199,14 +180,11 @@ export async function listEffectLogsForDay(date: Date): Promise<EffectLog[]> {
   return listEffectLogsBetween(new Date(start), new Date(end));
 }
 
-export async function listContextLogsBetween(
-  startDate: string,
-  endDate: string,
-): Promise<ContextLog[]> {
+export async function listContextLogsBetween(startDate: string, endDate: string): Promise<ContextLog[]> {
   const supabase = requireSupabase();
   const { data, error } = await supabase
     .from("sidekick_context_logs")
-    .select("id,date,sleep_quality,ate_breakfast,caffeine,stress")
+    .select("id,date,sleep_quality,ate_breakfast,caffeine,stress,other,other_text")
     .gte("date", startDate)
     .lte("date", endDate);
   if (error) throw error;
@@ -233,51 +211,31 @@ export async function createEffectLogs(
 
 export async function deleteEffectLog(id: string): Promise<void> {
   const supabase = requireSupabase();
-  const { error } = await supabase
-    .from("sidekick_effect_logs")
-    .delete()
-    .eq("id", id);
+  const { error } = await supabase.from("sidekick_effect_logs").delete().eq("id", id);
   if (error) throw error;
 }
 
-export async function getContextForDay(
-  dateStr: string,
-): Promise<ContextLog | null> {
+export async function getContextForDay(dateStr: string): Promise<ContextLog | null> {
   const supabase = requireSupabase();
   const { data, error } = await supabase
     .from("sidekick_context_logs")
-    .select("id,date,sleep_quality,ate_breakfast,caffeine,stress")
+    .select("id,date,sleep_quality,ate_breakfast,caffeine,stress,other,other_text")
     .eq("date", dateStr)
     .maybeSingle();
   if (error) throw error;
   return data;
 }
 
-export async function saveContextForDay(
-  dateStr: string,
-  fields: ContextFields,
-  existingId: string | null,
-): Promise<void> {
+export async function saveContextForDay(dateStr: string, fields: ContextFields, existingId: string | null): Promise<void> {
   const supabase = requireSupabase();
   const { error } = existingId
-    ? await supabase
-        .from("sidekick_context_logs")
-        .update(fields)
-        .eq("id", existingId)
-    : await supabase
-        .from("sidekick_context_logs")
-        .insert({ date: dateStr, ...fields });
+    ? await supabase.from("sidekick_context_logs").update(fields).eq("id", existingId)
+    : await supabase.from("sidekick_context_logs").insert({ date: dateStr, ...fields });
   if (error) throw error;
 }
 
-export async function updateEffectType(
-  id: string,
-  patch: { label?: string; active?: boolean },
-): Promise<void> {
+export async function updateEffectType(id: string, patch: { label?: string; active?: boolean }): Promise<void> {
   const supabase = requireSupabase();
-  const { error } = await supabase
-    .from("sidekick_effect_types")
-    .update(patch)
-    .eq("id", id);
+  const { error } = await supabase.from("sidekick_effect_types").update(patch).eq("id", id);
   if (error) throw error;
 }

@@ -71,7 +71,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
   return (
     <div className="mx-auto min-h-dvh max-w-md px-5 pb-12">
       {step === "welcome" && (
-        <div className="flex min-h-dvh flex-col items-center justify-center text-center">
+        <div className="fade-in-up flex min-h-dvh flex-col items-center justify-center text-center">
           <img src="/bivi/bivi-waving.webp" alt="" className="mb-3 h-32 w-32" />
           <h1 className="text-2xl font-bold">Hi, I'm Bivi!</h1>
           <p className="mt-3 text-ink-soft">
@@ -89,7 +89,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
       )}
 
       {step === "medication" && (
-        <div className="pt-10">
+        <div className="fade-in-up pt-10">
           <p className="text-sm text-ink-faint">Step 1 of 2</p>
           <h1 className="mt-1 text-2xl font-bold">Your medication</h1>
           <p className="mt-2 mb-6 text-ink-soft">More medications can be added later in settings.</p>
@@ -104,7 +104,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
       )}
 
       {step === "chips" && (
-        <div className="pt-10">
+        <div className="fade-in-up pt-10">
           <p className="text-sm text-ink-faint">Step 2 of 2</p>
           <h1 className="mt-1 text-2xl font-bold">Your words for it</h1>
           <p className="mt-2 mb-6 text-ink-soft">

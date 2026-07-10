@@ -18,7 +18,7 @@ export default function Login() {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center px-6">
+    <div className="fade-in-up flex min-h-dvh flex-col items-center justify-center px-6">
       <img src="/bivi/bivi-logo.webp" alt="" className="mb-3 h-28 w-28" />
       <h1 className="text-2xl font-bold">Bivi</h1>
       <p className="mt-1 mb-8 text-center text-ink-soft">Your little side-effect sidekick</p>

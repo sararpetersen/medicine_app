@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { NavLink, Navigate, Route, Routes } from "react-router-dom";
+import { NavLink, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useSession } from "./hooks/useSession";
 import { listMedications } from "./lib/db";
 import { supabaseConfigError } from "./lib/supabase";
@@ -19,10 +19,28 @@ const tabs = [
   { to: "/settings", label: "Settings" },
 ];
 
+function TitleUpdater() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    const tab = tabs.find((t) =>
+      t.to === "/" ? pathname === "/" : pathname.startsWith(t.to),
+    );
+    document.title = tab && tab.to !== "/" ? `${tab.label} — Bivi` : "Bivi";
+  }, [pathname]);
+  return null;
+}
+
 function Shell() {
   return (
     <div className="mx-auto min-h-dvh max-w-md">
-      <main className="px-5 pb-28">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-xl focus:bg-surface focus:px-4 focus:py-2"
+      >
+        Skip to content
+      </a>
+      <TitleUpdater />
+      <main id="main" className="px-5 pb-28">
         <Routes>
           <Route path="/" element={<Today />} />
           <Route path="/history" element={<History />} />

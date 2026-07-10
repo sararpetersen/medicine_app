@@ -4,8 +4,8 @@
   --color-canvas: #f7f6f3;
   --color-surface: #ffffff;
   --color-ink: #3b3a36;
-  --color-ink-soft: #6e6c66;
-  --color-ink-faint: #9b998f;
+  --color-ink-soft: #64625b;
+  --color-ink-faint: #726f65;
   --color-accent: #96660d;
   --color-accent-deep: #7a5309;
   --color-accent-soft: #f7edd8;
@@ -15,6 +15,8 @@
   --color-line: #e5e3dc;
   --color-line-strong: #c9c6ba;
   --font-sans: "Atkinson Hyperlegible", system-ui, sans-serif;
+  --text-sm--line-height: calc(1.35 / 0.875);
+  --text-base--line-height: 1.6;
 }
 
 html {
@@ -26,7 +28,7 @@ html.dark {
   --color-surface: #2a2926;
   --color-ink: #e9e7e1;
   --color-ink-soft: #b7b4aa;
-  --color-ink-faint: #8b897f;
+  --color-ink-faint: #999689;
   --color-accent: #e3b355;
   --color-accent-deep: #ecc270;
   --color-accent-soft: #403319;

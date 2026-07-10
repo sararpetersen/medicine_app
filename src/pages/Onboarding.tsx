@@ -141,6 +141,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
                   addCustom();
                 }
               }}
+              aria-label="Add your own side-effect word"
               placeholder="Add your own words…"
               className="flex-1 rounded-xl border border-line bg-surface px-4 py-3 outline-none focus:border-accent"
             />
@@ -153,7 +154,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
             An <em>"Actually fine"</em> chip is included automatically – good days count too.
           </p>
 
-          {error && <p className="mt-3 text-sm text-red-700">Couldn't save your setup. Check your connection and try again.</p>}
+          {error && <p role="alert" className="mt-3 text-sm text-red-700">Couldn't save your setup. Check your connection and try again.</p>}
 
           <button
             onClick={finish}

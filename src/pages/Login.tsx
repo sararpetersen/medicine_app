@@ -35,6 +35,7 @@ export default function Login() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            aria-label="Email address"
             placeholder="you@example.com"
             className="w-full rounded-xl border border-line bg-surface px-4 py-3 outline-none focus:border-accent"
           />
@@ -46,7 +47,7 @@ export default function Login() {
             {status === "sending" ? "Sending…" : "Email me a sign-in link"}
           </button>
           <p className="text-center text-sm text-ink-faint">No password to remember – just click the link.</p>
-          {status === "error" && <p className="text-center text-sm text-red-700">That didn't work. Check the address and try again.</p>}
+          {status === "error" && <p role="alert" className="text-center text-sm text-red-700">That didn't work. Check the address and try again.</p>}
         </form>
       )}
     </div>

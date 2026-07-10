@@ -132,7 +132,7 @@ export default function History() {
                         await refresh();
                       }}
                       aria-label={`Delete ${medName(dose.medication_id)} dose at ${fmtTime(dose.taken_at)}`}
-                      className="text-ink-faint hover:text-ink"
+                      className="-m-2 inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-ink-faint hover:bg-canvas hover:text-ink"
                     >
                       ×
                     </button>
@@ -152,7 +152,7 @@ export default function History() {
                         await refresh();
                       }}
                       aria-label={`Delete ${log.label} at ${fmtTime(log.occurred_at)}`}
-                      className="text-ink-faint hover:text-ink"
+                      className="-m-2 inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-ink-faint hover:bg-canvas hover:text-ink"
                     >
                       ×
                     </button>

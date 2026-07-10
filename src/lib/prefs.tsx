@@ -8,20 +8,32 @@ import {
 
 export type TextSize = "s" | "m" | "l" | "xl";
 export type Theme = "system" | "light" | "dark";
+export type FontChoice = "hyperlegible" | "opendyslexic" | "system";
 
 export interface Prefs {
   textSize: TextSize;
   theme: Theme;
   simplified: boolean;
+  font: FontChoice;
 }
 
-const DEFAULTS: Prefs = { textSize: "m", theme: "system", simplified: false };
+const DEFAULTS: Prefs = {
+  textSize: "m",
+  theme: "system",
+  simplified: false,
+  font: "hyperlegible",
+};
 const STORAGE_KEY = "sidekick-prefs";
 const FONT_SIZES: Record<TextSize, string> = {
   s: "15px",
   m: "16px",
   l: "18px",
   xl: "20px",
+};
+export const FONT_STACKS: Record<FontChoice, string> = {
+  hyperlegible: '"Atkinson Hyperlegible", system-ui, sans-serif',
+  opendyslexic: '"OpenDyslexic", "Atkinson Hyperlegible", system-ui, sans-serif',
+  system: "system-ui, sans-serif",
 };
 
 function loadPrefs(): Prefs {
@@ -43,6 +55,10 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
     document.documentElement.style.fontSize = FONT_SIZES[prefs.textSize];
+    document.documentElement.style.setProperty(
+      "--font-sans",
+      FONT_STACKS[prefs.font],
+    );
 
     const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
     const applyTheme = () => {

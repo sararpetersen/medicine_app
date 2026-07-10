@@ -4,7 +4,13 @@ import { useSession } from "../hooks/useSession";
 import type { EffectType, Medication } from "../lib/db";
 import { createEffectTypes, createMedication, listEffectTypes, listMedications, toHm, updateEffectType, updateMedication } from "../lib/db";
 import MedicationForm from "../components/MedicationForm";
-import { usePrefs, type TextSize, type Theme } from "../lib/prefs";
+import {
+  FONT_STACKS,
+  usePrefs,
+  type FontChoice,
+  type TextSize,
+  type Theme,
+} from "../lib/prefs";
 
 function describeDose(med: Medication): string {
   const dose = med.dose_amount != null ? `${med.dose_amount} ${med.dose_unit ?? ""}` : "";
@@ -178,6 +184,7 @@ function ChipsSection() {
                 void addChip();
               }
             }}
+            aria-label="New chip name"
             placeholder="Add a new chip…"
             className="flex-1 rounded-xl border border-line bg-surface px-4 py-2 outline-none focus:border-accent"
           />
@@ -204,6 +211,12 @@ const THEMES: { value: Theme; label: string }[] = [
   { value: "system", label: "System" },
   { value: "light", label: "Light" },
   { value: "dark", label: "Dark" },
+];
+
+const FONTS: { value: FontChoice; label: string }[] = [
+  { value: "hyperlegible", label: "Standard" },
+  { value: "opendyslexic", label: "Dyslexia-friendly" },
+  { value: "system", label: "System" },
 ];
 
 function AccessibilitySection() {
@@ -243,6 +256,27 @@ function AccessibilitySection() {
               </button>
             ))}
           </div>
+        </div>
+
+        <div>
+          <p className="text-sm text-ink-soft">Font</p>
+          <div className="mt-2 flex gap-2">
+            {FONTS.map(({ value, label }) => (
+              <button
+                key={value}
+                onClick={() => setPref("font", value)}
+                aria-pressed={prefs.font === value}
+                style={{ fontFamily: FONT_STACKS[value] }}
+                className={seg(prefs.font === value)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <p className="mt-1 text-sm text-ink-faint">
+            Each button previews its font. Standard is Atkinson Hyperlegible,
+            designed for readability.
+          </p>
         </div>
 
         <div className="flex items-center justify-between gap-3 rounded-2xl border border-line bg-surface p-4">

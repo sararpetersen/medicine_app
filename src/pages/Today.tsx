@@ -65,7 +65,7 @@ function DoseCard({ med, logs, onChanged }: { med: Medication; logs: DoseLog[]; 
                   await onChanged();
                 }}
                 aria-label={`Remove dose logged at ${fmtTime(log.taken_at)}`}
-                className="ml-1 text-ink-faint hover:text-ink"
+                className="-my-2 ml-0.5 inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-ink-faint hover:bg-canvas hover:text-ink"
               >
                 ×
               </button>
@@ -413,7 +413,7 @@ export default function Today() {
                     await refresh();
                   }}
                   aria-label={`Delete ${log.label} logged at ${fmtTime(log.occurred_at)}`}
-                  className="text-ink-faint hover:text-ink"
+                  className="-m-2 inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-ink-faint hover:bg-canvas hover:text-ink"
                 >
                   ×
                 </button>

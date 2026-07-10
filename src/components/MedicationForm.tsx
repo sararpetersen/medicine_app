@@ -47,10 +47,11 @@ export default function MedicationForm({
   return (
     <form onSubmit={submit} className="space-y-4">
       <div>
-        <label className="mb-1 block text-sm text-ink-soft">
+        <label htmlFor="med-name" className="mb-1 block text-sm text-ink-soft">
           Medication name
         </label>
         <input
+          id="med-name"
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -60,11 +61,12 @@ export default function MedicationForm({
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-ink-soft">
+        <label htmlFor="med-dose" className="mb-1 block text-sm text-ink-soft">
           Dose (optional)
         </label>
         <div className="flex gap-2">
           <input
+            id="med-dose"
             type="number"
             inputMode="decimal"
             min="0"
@@ -84,15 +86,16 @@ export default function MedicationForm({
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-ink-soft">
+        <p className="mb-1 block text-sm text-ink-soft">
           When do you usually take it?
-        </label>
+        </p>
         <div className="space-y-2">
           {times.map((time, i) => (
             <div key={i} className="flex items-center gap-2">
               <input
                 type="time"
                 required
+                aria-label={`Dose time ${i + 1}`}
                 value={time}
                 onChange={(e) =>
                   setTimes(times.map((t, j) => (j === i ? e.target.value : t)))
@@ -121,7 +124,7 @@ export default function MedicationForm({
       </div>
 
       {error && (
-        <p className="text-sm text-red-700">
+        <p role="alert" className="text-sm text-red-700">
           Couldn't save that. Check your connection and try again.
         </p>
       )}

@@ -112,8 +112,13 @@ function ChipRow({ chip, onChanged }: { chip: EffectType; onChanged: () => Promi
       setLabel(chip.label);
       return;
     }
-    await updateEffectType(chip.id, { label: next });
-    await onChanged();
+    try {
+      await updateEffectType(chip.id, { label: next });
+      await onChanged();
+    } catch {
+      setLabel(chip.label);
+      alert("The rename wasn't saved. Check your connection and try again.");
+    }
   }
 
   return (
@@ -133,8 +138,12 @@ function ChipRow({ chip, onChanged }: { chip: EffectType; onChanged: () => Promi
       ) : (
         <button
           onClick={async () => {
-            await updateEffectType(chip.id, { active: !chip.active });
-            await onChanged();
+            try {
+              await updateEffectType(chip.id, { active: !chip.active });
+              await onChanged();
+            } catch {
+              alert("That change wasn't saved. Check your connection and try again.");
+            }
           }}
           className="shrink-0 text-sm text-ink-faint hover:underline"
         >
@@ -148,6 +157,7 @@ function ChipRow({ chip, onChanged }: { chip: EffectType; onChanged: () => Promi
 function ChipsSection() {
   const [chips, setChips] = useState<EffectType[]>([]);
   const [draft, setDraft] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const load = () =>
     listEffectTypes()
@@ -160,10 +170,15 @@ function ChipsSection() {
   async function addChip() {
     const label = draft.trim();
     if (!label) return;
-    const maxOrder = Math.max(0, ...chips.map((c) => c.sort_order));
-    await createEffectTypes([{ label, sort_order: maxOrder + 1 }]);
-    setDraft("");
-    await load();
+    setError(null);
+    try {
+      const maxOrder = Math.max(0, ...chips.map((c) => c.sort_order));
+      await createEffectTypes([{ label, sort_order: maxOrder + 1 }]);
+      setDraft("");
+      await load();
+    } catch {
+      setError(`"${label}" wasn't saved. Check your connection and try again.`);
+    }
   }
 
   return (
@@ -195,6 +210,11 @@ function ChipsSection() {
             Add
           </button>
         </div>
+        {error && (
+          <p role="alert" className="text-sm text-red-700">
+            {error}
+          </p>
+        )}
       </div>
     </section>
   );

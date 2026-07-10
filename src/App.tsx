@@ -40,7 +40,17 @@ function Shell() {
         Skip to content
       </a>
       <TitleUpdater />
-      <main id="main" className="px-5 pb-28">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-x-0 bottom-20 z-0 flex justify-center"
+      >
+        <img
+          src="/bivi/bivi-illustration.webp"
+          alt=""
+          className="w-80 max-w-[70vw] opacity-[0.06]"
+        />
+      </div>
+      <main id="main" className="relative z-10 px-5 pb-28">
         <Routes>
           <Route path="/" element={<Today />} />
           <Route path="/history" element={<History />} />

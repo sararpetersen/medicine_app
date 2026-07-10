@@ -7,6 +7,12 @@
       "runtimeArgs": ["run", "dev"],
       "port": 5173,
       "autoPort": true
+    },
+    {
+      "name": "bivi-site",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "../bivi-site", "run", "dev"],
+      "port": 4321
     }
   ]
 }

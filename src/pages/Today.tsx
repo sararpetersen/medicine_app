@@ -37,9 +37,12 @@ function todayAt(hm: string): Date {
 
 function DoseCard({ med, logs, onChanged }: { med: Medication; logs: DoseLog[]; onChanged: () => Promise<void> }) {
   const [pickingTime, setPickingTime] = useState(false);
+  const [loggingExtra, setLoggingExtra] = useState(false);
   const [time, setTime] = useState(() => new Date().toTimeString().slice(0, 5));
   const taken = logs.filter((l) => !l.skipped);
   const skipped = logs.some((l) => l.skipped);
+  const scheduled = Math.max(med.schedule_times.length, 1);
+  const allLogged = taken.length >= scheduled;
 
   const dose = med.dose_amount != null ? ` ${med.dose_amount} ${med.dose_unit ?? ""}` : "";
 
@@ -50,7 +53,11 @@ function DoseCard({ med, logs, onChanged }: { med: Medication; logs: DoseLog[]; 
           {med.name}
           <span className="font-normal text-ink-soft">{dose}</span>
         </p>
-        {taken.length > 0 && <span className="rounded-full bg-good-soft px-3 py-1 text-sm text-good">taken</span>}
+        {taken.length > 0 && (
+          <span className="rounded-full bg-good-soft px-3 py-1 text-sm text-good">
+            {scheduled > 1 ? `${Math.min(taken.length, scheduled)} of ${scheduled} taken` : "taken"}
+          </span>
+        )}
         {skipped && taken.length === 0 && <span className="rounded-full bg-canvas px-3 py-1 text-sm text-ink-faint">skipped</span>}
       </div>
 
@@ -103,11 +110,22 @@ function DoseCard({ med, logs, onChanged }: { med: Medication; logs: DoseLog[]; 
             Cancel
           </button>
         </div>
+      ) : allLogged && !loggingExtra ? (
+        <div className="mt-3 flex items-center justify-between gap-2">
+          <p className="text-sm text-good">All doses logged for today.</p>
+          <button
+            onClick={() => setLoggingExtra(true)}
+            className="shrink-0 text-sm text-ink-faint hover:underline"
+          >
+            Log an extra dose
+          </button>
+        </div>
       ) : (
         <div className="mt-3 flex gap-2">
           <button
             onClick={async () => {
               await createDoseLog({ medication_id: med.id });
+              setLoggingExtra(false);
               await onChanged();
             }}
             className="flex-1 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-on-accent hover:bg-accent-deep"

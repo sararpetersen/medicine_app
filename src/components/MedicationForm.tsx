@@ -21,6 +21,15 @@ export default function MedicationForm({
   const [times, setTimes] = useState<string[]>(
     initial ? initial.schedule_times.map(toHm) : ["08:00"],
   );
+
+  const TIME_SUGGESTIONS = ["08:00", "14:00", "18:00", "21:00"];
+  function setDosesPerDay(count: number) {
+    setTimes((prev) =>
+      count <= prev.length
+        ? prev.slice(0, count)
+        : [...prev, ...TIME_SUGGESTIONS.slice(prev.length, count)],
+    );
+  }
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
 
@@ -87,11 +96,31 @@ export default function MedicationForm({
 
       <div>
         <p className="mb-1 block text-sm text-ink-soft">
-          When do you usually take it?
+          How many times a day do you take it?
         </p>
-        <div className="space-y-2">
+        <div className="flex gap-2" role="group" aria-label="Times per day">
+          {[1, 2, 3, 4].map((n) => (
+            <button
+              key={n}
+              type="button"
+              onClick={() => setDosesPerDay(n)}
+              aria-pressed={times.length === n}
+              className={`flex-1 rounded-xl border px-3 py-2 text-sm transition-colors ${
+                times.length === n
+                  ? "border-accent bg-accent-soft font-bold text-accent"
+                  : "border-line bg-surface text-ink-soft hover:border-line-strong hover:bg-canvas"
+              }`}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
+        <div className="mt-3 space-y-2">
           {times.map((time, i) => (
-            <div key={i} className="flex items-center gap-2">
+            <div key={i} className="flex items-center gap-3">
+              <span className="w-16 shrink-0 text-sm text-ink-faint">
+                {times.length === 1 ? "Time" : `Dose ${i + 1}`}
+              </span>
               <input
                 type="time"
                 required
@@ -100,27 +129,11 @@ export default function MedicationForm({
                 onChange={(e) =>
                   setTimes(times.map((t, j) => (j === i ? e.target.value : t)))
                 }
-                className={`${inputClass} flex-1`}
+                className={`${inputClass} min-w-0 flex-1`}
               />
-              {times.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => setTimes(times.filter((_, j) => j !== i))}
-                  className="rounded-xl border border-line px-3 py-3 text-sm text-ink-faint hover:border-line-strong hover:bg-canvas"
-                >
-                  Remove
-                </button>
-              )}
             </div>
           ))}
         </div>
-        <button
-          type="button"
-          onClick={() => setTimes([...times, "14:00"])}
-          className="mt-2 text-sm text-accent hover:underline"
-        >
-          + Add another time
-        </button>
       </div>
 
       {error && (

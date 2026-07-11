@@ -29,6 +29,31 @@ export function toHm(time: string): string {
   return time.slice(0, 5);
 }
 
+export interface Profile {
+  username: string;
+  profilePhoto: string | null;
+}
+
+export async function getProfile(): Promise<Profile> {
+  const supabase = requireSupabase();
+  const { data, error } = await supabase
+    .from("sidekick_profiles")
+    .select("username,profile_photo")
+    .maybeSingle();
+  if (error) throw error;
+  return { username: data?.username ?? "", profilePhoto: data?.profile_photo ?? null };
+}
+
+export async function saveProfile(userId: string, profile: Profile): Promise<void> {
+  const supabase = requireSupabase();
+  const { error } = await supabase.from("sidekick_profiles").upsert({
+    user_id: userId,
+    username: profile.username,
+    profile_photo: profile.profilePhoto,
+  });
+  if (error) throw error;
+}
+
 export async function listMedications(): Promise<Medication[]> {
   const supabase = requireSupabase();
   const { data, error } = await supabase

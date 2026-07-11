@@ -88,7 +88,7 @@ function ProfileSection() {
         onChange={(event) => setPref("username", event.target.value)}
         className="mt-1 w-full rounded-xl border border-line bg-surface px-4 py-3 outline-none focus:border-accent"
       />
-      <p className="mt-2 text-sm text-ink-faint">Saved on this device.</p>
+      <p className="mt-2 text-sm text-ink-faint">Saved to your account.</p>
     </section>
   );
 }

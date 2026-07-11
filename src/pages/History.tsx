@@ -120,11 +120,11 @@ export default function History() {
           <p className="text-sm text-accent">Nothing here yet. Once you log on the 'Today' screen, your timeline grows on its own.</p>
         </div>
       ) : (
-        <div className="mt-4 space-y-6">
+        <div data-entrance-stagger className="mt-4 space-y-6">
           {days.map((day) => (
             <section key={day.date}>
               <h2 className="font-bold">{dayTitle(day.date)}</h2>
-              <div className="mt-2 space-y-2">
+              <div data-entrance-stagger className="mt-2 space-y-2">
                 {day.doses.map((dose) => (
                   <div key={dose.id} className="flex items-center justify-between rounded-2xl border border-line bg-surface px-4 py-2">
                     <span>

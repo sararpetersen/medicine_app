@@ -98,7 +98,7 @@ export default function MedicationForm({
         <p className="mb-1 block text-sm text-ink-soft">
           How many times a day do you take it?
         </p>
-        <div className="flex gap-2" role="group" aria-label="Times per day">
+        <div data-entrance-stagger className="flex gap-2" role="group" aria-label="Times per day">
           {[1, 2, 3, 4].map((n) => (
             <button
               key={n}
@@ -115,7 +115,7 @@ export default function MedicationForm({
             </button>
           ))}
         </div>
-        <div className="mt-3 space-y-2">
+        <div data-entrance-stagger className="mt-3 space-y-2">
           {times.map((time, i) => (
             <div key={i} className="flex items-center gap-3">
               <span className="w-16 shrink-0 text-sm text-ink-faint">
@@ -142,7 +142,7 @@ export default function MedicationForm({
         </p>
       )}
 
-      <div className="flex gap-2 pt-1">
+      <div data-entrance-stagger className="flex gap-2 pt-1">
         {onCancel && (
           <button
             type="button"

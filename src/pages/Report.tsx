@@ -62,7 +62,7 @@ export default function Report() {
       <div className="no-print">
         <h1 className="text-2xl font-bold">Doctor report</h1>
         <p className="mt-1 text-sm text-ink-soft">A one-page summary for your next appointment. Print it or save it as a PDF.</p>
-        <div className="mt-3 flex gap-2">
+        <div data-entrance-stagger className="mt-3 flex gap-2">
           {RANGES.map((r) => (
             <button
               key={r}
@@ -96,15 +96,15 @@ export default function Report() {
             </p>
 
             <h3 className="mt-4 font-bold">Medication</h3>
-            {meds
-              .filter((m) => m.active)
-              .map((m) => (
+            <div data-entrance-stagger>
+              {meds.filter((m) => m.active).map((m) => (
                 <p key={m.id} className="text-sm">
                   {m.name}
                   {m.dose_amount != null && ` — ${m.dose_amount} ${m.dose_unit ?? ""}`}
                   {m.schedule_times.length > 0 && ` at ${m.schedule_times.map(toHm).join(", ")}`}
                 </p>
               ))}
+            </div>
             <p className="mt-1 text-sm text-ink-soft">
               Doses logged: {taken}
               {skippedCount > 0 && ` · skipped: ${skippedCount}`}
@@ -120,7 +120,7 @@ export default function Report() {
                   <th className="py-1 font-normal">Usually appears</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody data-entrance-stagger>
                 {summaries.map((s) => (
                   <tr key={s.label} className="border-t border-line">
                     <td className="py-1.5 pr-2">
@@ -138,7 +138,7 @@ export default function Report() {
             {insights.length > 0 && (
               <>
                 <h3 className="mt-4 font-bold">Context</h3>
-                <ul className="mt-1 list-inside list-disc text-sm">
+                <ul data-entrance-stagger className="mt-1 list-inside list-disc text-sm">
                   {insights.map((i) => (
                     <li key={i.label}>
                       {i.rateWith.toFixed(1)} effects/day on {i.label} vs {i.rateWithout.toFixed(1)} otherwise

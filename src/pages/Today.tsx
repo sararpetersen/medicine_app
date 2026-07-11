@@ -63,7 +63,7 @@ function DoseCard({ med, logs, onChanged }: { med: Medication; logs: DoseLog[]; 
       </div>
 
       {taken.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-2">
+        <div data-entrance-stagger className="mt-2 flex flex-wrap gap-2">
           {taken.map((log) => (
             <span
               key={log.id}
@@ -86,7 +86,7 @@ function DoseCard({ med, logs, onChanged }: { med: Medication; logs: DoseLog[]; 
       )}
 
       {pickingTime ? (
-        <div className="mt-3 flex gap-2">
+        <div data-entrance-item className="mt-3 flex gap-2">
           <input
             type="time"
             value={time}
@@ -115,14 +115,14 @@ function DoseCard({ med, logs, onChanged }: { med: Medication; logs: DoseLog[]; 
           </button>
         </div>
       ) : allLogged && !loggingExtra ? (
-        <div className="mt-3 flex items-center justify-between gap-2">
+        <div data-entrance-item className="mt-3 flex items-center justify-between gap-2">
           <p className="text-sm text-good">All doses logged for today.</p>
           <button onClick={() => setLoggingExtra(true)} className="shrink-0 text-sm text-ink-faint hover:underline">
             Log an extra dose
           </button>
         </div>
       ) : (
-        <div className="mt-3 flex gap-2">
+        <div data-entrance-item className="mt-3 flex gap-2">
           <button
             onClick={async () => {
               await createDoseLog({ medication_id: med.id });
@@ -202,10 +202,10 @@ function QuickLog({ types, simplified, onLogged }: { types: EffectType[]; simpli
 
   return (
     <section className="mt-8">
-      <h2 className="font-bold">How's it feeling right now?</h2>
+      <h2 className="font-bold">How's it feeling, right now?</h2>
       <p className="mt-1 text-sm text-ink-faint">Tap anything that fits – or nothing at all. It's okay to skip.</p>
 
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div data-entrance-stagger className="mt-3 flex flex-wrap gap-2">
         {active.map((t) => {
           const on = selected.includes(t.id);
           return (
@@ -226,11 +226,11 @@ function QuickLog({ types, simplified, onLogged }: { types: EffectType[]; simpli
       </div>
 
       {!simplified && hasBadSelection && (
-        <div className="mt-4">
+        <div data-entrance-item className="mt-4">
           <p className="text-sm text-ink-soft">
             How much is it bothering you? <span className="text-ink-faint">(optional)</span>
           </p>
-          <div className="mt-2 flex gap-2">
+          <div data-entrance-stagger className="mt-2 flex gap-2">
             {SEVERITIES.map((s) => (
               <button
                 key={s.value}
@@ -251,7 +251,7 @@ function QuickLog({ types, simplified, onLogged }: { types: EffectType[]; simpli
       )}
 
       {selected.length > 0 && (
-        <div className="mt-4 space-y-3">
+        <div data-entrance-item className="mt-4 space-y-3">
           <div className="flex items-center gap-3 text-sm">
             <span className="text-ink-faint">When?</span>
             <button
@@ -300,7 +300,7 @@ function QuickLog({ types, simplified, onLogged }: { types: EffectType[]; simpli
 
       <div role="status" aria-live="polite" className="mt-3 min-h-10">
         {confirmed && (
-          <div className="flex items-center gap-2">
+          <div data-entrance-item className="flex items-center gap-2">
             <img src="/bivi/bivi-celebrating.webp" alt="" className="h-10 w-10" />
             <p className="text-sm text-good">Logged. That's all – you're done.</p>
           </div>
@@ -364,7 +364,7 @@ function ContextCard({ context, onChanged }: { context: ContextLog | null; onCha
       <h2 className="font-bold">
         Today's context <span className="font-normal text-ink-faint">(optional)</span>
       </h2>
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div data-entrance-stagger className="mt-3 flex flex-wrap gap-2">
         {CONTEXT_TOGGLES.map(({ key, label, onValue }) => {
           const on = fields[key] != null;
           return (
@@ -382,7 +382,7 @@ function ContextCard({ context, onChanged }: { context: ContextLog | null; onCha
         })}
       </div>
       {fields.other && (
-        <div className="mt-3 rounded-2xl border border-line bg-surface p-3">
+        <div data-entrance-item className="mt-3 rounded-2xl border border-line bg-surface p-3">
           <label htmlFor="other-context" className="text-sm text-ink-soft">
             What else affected your day?
           </label>
@@ -486,7 +486,7 @@ export default function Today() {
         {prefs.profilePhoto && <img src={prefs.profilePhoto} alt="" className="h-12 w-12 rounded-full object-cover" />}
       </div>
 
-      <div className="mt-4 space-y-3">
+      <div data-entrance-stagger className="mt-4 space-y-3">
         {meds.map((med) => (
           <DoseCard key={med.id} med={med} logs={doseLogs.filter((l) => l.medication_id === med.id)} onChanged={refresh} />
         ))}
@@ -497,7 +497,7 @@ export default function Today() {
       {effectLogs.length > 0 && (
         <section className="mt-8">
           <h2 className="font-bold">Logged today</h2>
-          <ul className="mt-2 space-y-2">
+          <ul data-entrance-stagger className="mt-2 space-y-2">
             {effectLogs.map((log) => (
               <li key={log.id} className="flex items-center justify-between rounded-2xl border border-line bg-surface px-4 py-2">
                 <span>

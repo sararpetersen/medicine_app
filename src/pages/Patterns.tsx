@@ -98,7 +98,7 @@ export default function Patterns() {
                   axisLine={false}
                   tickLine={false}
                 />
-                <Bar dataKey="count" fill="var(--color-accent)" radius={[0, 6, 6, 0]} barSize={18} />
+                <Bar dataKey="count" fill="var(--color-accent)" radius={[0, 6, 6, 0]} barSize={18} animationDuration={2200} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -113,7 +113,7 @@ export default function Patterns() {
       <section className="mt-8">
         <h2 className="font-bold">When after a dose</h2>
         <p className="mt-1 text-sm text-ink-soft">How long after taking your medication each effect tends to show up.</p>
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div data-entrance-stagger className="mt-3 flex flex-wrap gap-2">
           <button onClick={() => setFocus(null)} className={chip(focus === null)}>
             All
           </button>
@@ -133,7 +133,7 @@ export default function Patterns() {
               <BarChart data={timing.data} margin={{ top: 8, right: 8, bottom: 0, left: -24 }}>
                 <XAxis dataKey="bucket" tick={{ fill: "var(--color-ink-faint)", fontSize: 11 }} axisLine={false} tickLine={false} />
                 <YAxis allowDecimals={false} tick={{ fill: "var(--color-ink-faint)", fontSize: 12 }} axisLine={false} tickLine={false} />
-                <Bar dataKey="count" fill="var(--color-accent)" radius={[6, 6, 0, 0]} barSize={22} />
+                <Bar dataKey="count" fill="var(--color-accent)" radius={[6, 6, 0, 0]} barSize={22} animationDuration={2200} />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -147,7 +147,7 @@ export default function Patterns() {
             Keep tapping the daily context chips on 'Today' – clues appear once there are a few days of each kind to compare.
           </p>
         ) : (
-          <ul className="mt-2 space-y-2">
+          <ul data-entrance-stagger className="mt-2 space-y-2">
             {insights.map((insight) => (
               <li key={insight.label} className="rounded-2xl border border-line bg-surface px-4 py-3 text-sm">
                 On {insight.label} you logged <span className="font-bold">{insight.rateWith.toFixed(1)}</span> effects per day, vs{" "}

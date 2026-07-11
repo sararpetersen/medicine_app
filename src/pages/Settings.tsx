@@ -47,7 +47,7 @@ function ProfileSection() {
         <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-accent-soft text-2xl font-bold text-accent">
           {prefs.profilePhoto ? <img src={prefs.profilePhoto} alt="Your profile" className="h-full w-full object-cover" /> : initial}
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div data-entrance-stagger className="flex flex-wrap gap-2">
           <input
             ref={photoInput}
             type="file"
@@ -114,7 +114,7 @@ function MedicationsSection() {
   return (
     <section className="mt-6">
       <h2 className="font-bold">Medications</h2>
-      <div className="mt-2 space-y-2">
+      <div data-entrance-stagger className="mt-2 space-y-2">
         {meds.map((med) =>
           editing === med.id ? (
             <div key={med.id} className="rounded-2xl border border-line bg-surface p-4">
@@ -266,7 +266,7 @@ function ChipsSection() {
     <section className="mt-8">
       <h2 className="font-bold">Your side-effect chips</h2>
       <p className="mt-1 text-sm text-ink-soft">Tap a name to rename it. Deleted chips keep their old logs.</p>
-      <div className="mt-4 space-y-2">
+      <div data-entrance-stagger className="mt-4 space-y-2">
         {chips.map((chip) => (
           <ChipRow key={chip.id} chip={chip} onChanged={load} />
         ))}
@@ -333,7 +333,7 @@ function AccessibilitySection() {
       <div className="mt-1 space-y-4">
         <div>
           <p className="text-sm text-ink-soft">Text size</p>
-          <div className="mt-2 flex gap-2">
+          <div data-entrance-stagger className="mt-2 flex gap-2">
             {TEXT_SIZES.map(({ value, label }) => (
               <button
                 key={value}
@@ -349,7 +349,7 @@ function AccessibilitySection() {
 
         <div>
           <p className="text-sm text-ink-soft">Theme</p>
-          <div className="mt-2 flex gap-2">
+          <div data-entrance-stagger className="mt-2 flex gap-2">
             {THEMES.map(({ value, label }) => (
               <button key={value} onClick={() => setPref("theme", value)} aria-pressed={prefs.theme === value} className={seg(prefs.theme === value)}>
                 {label}
@@ -360,7 +360,7 @@ function AccessibilitySection() {
 
         <div>
           <p className="text-sm text-ink-soft">Font</p>
-          <div className="mt-2 flex gap-2">
+          <div data-entrance-stagger className="mt-2 flex gap-2">
             {FONTS.map(({ value, label }) => (
               <button
                 key={value}
@@ -378,13 +378,8 @@ function AccessibilitySection() {
           </p>
         </div>
 
-        <div className="relative mt-8 flex min-h-32 items-center justify-between gap-3 overflow-hidden rounded-2xl border border-line bg-surface p-4 pr-5">
-          <img
-            src="/bivi/bivi-illustration.webp"
-            alt=""
-            className="pointer-events-none absolute -right-5 -bottom-8 w-36 opacity-10"
-          />
-          <div className="relative z-10 max-w-[70%]">
+        <div className="mt-8 flex items-center justify-between gap-3 rounded-2xl border border-line bg-surface p-4">
+          <div>
             <p className="font-bold">Simplified logging</p>
             <p className="text-sm text-ink-soft">Just the chips – hides severity and daily context on 'Today'.</p>
           </div>
@@ -392,7 +387,7 @@ function AccessibilitySection() {
             role="switch"
             aria-checked={prefs.simplified}
             onClick={() => setPref("simplified", !prefs.simplified)}
-            className={`relative z-10 shrink-0 rounded-full border px-4 py-2 text-sm transition-colors ${
+            className={`shrink-0 rounded-full border px-4 py-2 text-sm transition-colors ${
               prefs.simplified
                 ? "border-accent bg-accent-soft font-bold text-accent"
                 : "border-line bg-surface text-ink-soft hover:border-line-strong hover:bg-canvas"
@@ -423,7 +418,11 @@ export default function Settings() {
       <section className="mt-8 rounded-2xl border border-line bg-surface p-5">
         <h2 className="font-bold">Your privacy</h2>
         <p className="mt-2 text-sm text-ink-soft">
-          Bivi stores only the information needed to provide the service. Your data is not sold or used for advertising, and nothing is sent to your doctor automatically.
+          Bivi stores only the information needed to provide the service. Your data is{" "}
+          <strong>
+            <em>not</em>
+          </strong>{" "}
+          sold or used for advertising, and nothing is sent to your doctor automatically.
         </p>
         <a
           href="https://web-bivi.netlify.app/privacy/"
@@ -432,7 +431,9 @@ export default function Settings() {
           className="mt-3 inline-flex min-h-11 items-center text-sm font-bold text-accent hover:underline"
         >
           Read the full privacy policy
-          <span aria-hidden="true" className="ml-1">↗</span>
+          <span aria-hidden="true" className="ml-1">
+            ↗
+          </span>
         </a>
       </section>
 

@@ -126,7 +126,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
             Pick the side effects you sometimes notice – these become your one-tap chips. Rename or change them anytime in settings.
           </p>
 
-          <div data-entrance-item className="flex flex-wrap gap-2">
+          <div data-entrance-item data-entrance-stagger className="flex flex-wrap gap-2">
             {[...SUGGESTED_CHIPS, ...customChips].map((label) => {
               const on = selected.includes(label);
               return (
@@ -146,7 +146,7 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
             })}
           </div>
 
-          <div data-entrance-item className="mt-4 flex gap-2">
+          <div data-entrance-item data-entrance-stagger className="mt-4 flex gap-2">
             <input
               value={draft}
               onChange={(e) => setDraft(e.target.value)}

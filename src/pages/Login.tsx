@@ -32,7 +32,7 @@ export default function Login() {
           <p className="mt-1 text-sm text-ink-soft">A sign-in link is on its way to {email}. You can close this tab.</p>
         </div>
       ) : (
-        <form onSubmit={sendLink} className="w-full max-w-sm space-y-3">
+        <form data-entrance-stagger onSubmit={sendLink} className="w-full max-w-sm space-y-3">
           <input
             type="email"
             required

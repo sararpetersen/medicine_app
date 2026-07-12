@@ -41,7 +41,8 @@ function DoseCard({ med, logs, onChanged }: { med: Medication; logs: DoseLog[]; 
   const [loggingExtra, setLoggingExtra] = useState(false);
   const [time, setTime] = useState(() => new Date().toTimeString().slice(0, 5));
   const taken = logs.filter((l) => !l.skipped);
-  const skipped = logs.some((l) => l.skipped);
+  const skipLog = logs.find((l) => l.skipped);
+  const skipped = skipLog !== undefined;
   const scheduled = Math.max(med.schedule_times.length, 1);
   const allLogged = taken.length >= scheduled;
 
@@ -119,6 +120,19 @@ function DoseCard({ med, logs, onChanged }: { med: Medication; logs: DoseLog[]; 
           <p className="text-sm text-good">All doses logged for today.</p>
           <button onClick={() => setLoggingExtra(true)} className="shrink-0 text-sm text-ink-faint hover:underline">
             Log an extra dose
+          </button>
+        </div>
+      ) : skipped && taken.length === 0 && !loggingExtra ? (
+        <div data-entrance-item className="mt-3 flex items-center justify-between gap-2">
+          <p className="text-sm text-ink-faint">Marked as skipped.</p>
+          <button
+            onClick={async () => {
+              if (skipLog) await deleteDoseLog(skipLog.id);
+              await onChanged();
+            }}
+            className="shrink-0 text-sm text-ink-faint hover:underline"
+          >
+            Undo skip
           </button>
         </div>
       ) : (

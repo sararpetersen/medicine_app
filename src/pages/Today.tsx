@@ -339,8 +339,12 @@ const CONTEXT_TOGGLES: {
 function ContextCard({ context, onChanged }: { context: ContextLog | null; onChanged: () => Promise<void> }) {
   const [otherText, setOtherText] = useState(context?.other_text ?? "");
   const [savingOther, setSavingOther] = useState(false);
+  const [editingOther, setEditingOther] = useState(!context?.other_text);
 
-  useEffect(() => setOtherText(context?.other_text ?? ""), [context?.other_text]);
+  useEffect(() => {
+    setOtherText(context?.other_text ?? "");
+    setEditingOther(!context?.other_text);
+  }, [context?.other_text]);
 
   const fields: ContextFields = {
     sleep_quality: context?.sleep_quality ?? null,
@@ -368,6 +372,7 @@ function ContextCard({ context, onChanged }: { context: ContextLog | null; onCha
     try {
       await saveContextForDay(localDateString(), { ...fields, other: true, other_text: otherText.trim() || null }, context?.id ?? null);
       await onChanged();
+      setEditingOther(false);
     } finally {
       setSavingOther(false);
     }
@@ -395,7 +400,15 @@ function ContextCard({ context, onChanged }: { context: ContextLog | null; onCha
           );
         })}
       </div>
-      {fields.other && (
+      {fields.other && !editingOther && (
+        <div data-entrance-item className="mt-3 flex items-start justify-between gap-3 rounded-2xl border border-line bg-surface p-3">
+          <p className="text-sm text-ink-soft">{context?.other_text || "No note added."}</p>
+          <button onClick={() => setEditingOther(true)} className="shrink-0 text-sm text-ink-faint hover:underline">
+            Edit
+          </button>
+        </div>
+      )}
+      {fields.other && editingOther && (
         <div data-entrance-item className="mt-3 rounded-2xl border border-line bg-surface p-3">
           <label htmlFor="other-context" className="text-sm text-ink-soft">
             What else affected your day?

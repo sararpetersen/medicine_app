@@ -444,6 +444,8 @@ export default function Settings() {
           Sign out
         </button>
       </section>
+
+      <p className="mt-6 text-center text-xs text-ink-faint">Bivi v{__APP_VERSION__}</p>
     </div>
   );
 }

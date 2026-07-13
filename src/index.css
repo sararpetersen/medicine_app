@@ -57,10 +57,6 @@ body {
   }
 }
 
-.entrance-pending {
-  opacity: 0;
-}
-
 @media print {
   nav,
   .no-print {
@@ -80,8 +76,5 @@ body {
   *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
-  }
-  .entrance-pending {
-    opacity: 1;
   }
 }

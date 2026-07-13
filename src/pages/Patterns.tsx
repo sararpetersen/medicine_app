@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useEntranceAnimations } from "../hooks/useEntranceAnimations";
+import { useCallback, useEffect, useState } from "react";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import type { ContextLog, DoseLog, EffectLog } from "../lib/db";
 import { listContextLogsBetween, listDoseLogsBetween, listEffectLogsBetween, localDateString } from "../lib/db";
@@ -8,7 +7,6 @@ import { contextInsights, summarizeEffects, timingHistogram } from "../lib/stats
 const DAYS = 30;
 
 export default function Patterns() {
-  const entranceRef = useRef<HTMLDivElement>(null);
   const [doses, setDoses] = useState<DoseLog[]>([]);
   const [effects, setEffects] = useState<EffectLog[]>([]);
   const [contexts, setContexts] = useState<ContextLog[]>([]);
@@ -36,15 +34,13 @@ export default function Patterns() {
     void refresh();
   }, [refresh]);
 
-  useEntranceAnimations(entranceRef, [loaded]);
-
   if (!loaded) {
     return <p className="pt-10 text-center text-ink-faint">One moment…</p>;
   }
 
   if (effects.length === 0) {
     return (
-      <div ref={entranceRef} className="pt-8">
+      <div className="pt-8">
         <h1 className="text-2xl font-bold">Patterns</h1>
         <div className="mt-6 rounded-2xl bg-accent-soft p-5 text-center">
           <img src="/bivi/bivi-thinking.webp" alt="" className="mx-auto mb-3 h-24 w-24" />
@@ -73,7 +69,7 @@ export default function Patterns() {
     }`;
 
   return (
-    <div ref={entranceRef} className="pt-8">
+    <div className="pt-8">
       <h1 className="text-2xl font-bold">Patterns</h1>
       <p className="mt-1 text-sm text-ink-faint">Last {DAYS} days.</p>
 
@@ -113,7 +109,7 @@ export default function Patterns() {
       <section className="mt-8">
         <h2 className="font-bold">When after a dose</h2>
         <p className="mt-1 text-sm text-ink-soft">How long after taking your medication each effect tends to show up.</p>
-        <div data-entrance-stagger className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           <button onClick={() => setFocus(null)} className={chip(focus === null)}>
             All
           </button>
@@ -147,7 +143,7 @@ export default function Patterns() {
             Keep tapping the daily context chips on 'Today' – clues appear once there are a few days of each kind to compare.
           </p>
         ) : (
-          <ul data-entrance-stagger className="mt-2 space-y-2">
+          <ul className="mt-2 space-y-2">
             {insights.map((insight) => (
               <li key={insight.label} className="rounded-2xl border border-line bg-surface px-4 py-3 text-sm">
                 On {insight.label} you logged <span className="font-bold">{insight.rateWith.toFixed(1)}</span> effects per day, vs{" "}

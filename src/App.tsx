@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { NavLink, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useSession } from "./hooks/useSession";
 import { listMedications } from "./lib/db";
@@ -11,7 +11,6 @@ import Patterns from "./pages/Patterns";
 import Report from "./pages/Report";
 import Settings from "./pages/Settings";
 import Today from "./pages/Today";
-import { useEntranceAnimations } from "./hooks/useEntranceAnimations";
 
 const tabs = [
   { to: "/", label: "Today" },
@@ -32,8 +31,6 @@ function TitleUpdater() {
 
 function Shell() {
   const { prefs } = usePrefs();
-  const navRef = useRef<HTMLElement>(null);
-  useEntranceAnimations(navRef);
 
   return (
     <div className="mx-auto min-h-dvh max-w-md">
@@ -59,8 +56,8 @@ function Shell() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
-      <nav ref={navRef} className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]">
-        <div data-entrance-stagger className="mx-auto flex max-w-md">
+      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]">
+        <div className="mx-auto flex max-w-md">
           {tabs.map((tab) => (
             <NavLink
               key={tab.to}
@@ -80,10 +77,8 @@ function Shell() {
 }
 
 function Splash({ children }: { children: React.ReactNode }) {
-  const entranceRef = useRef<HTMLDivElement>(null);
-  useEntranceAnimations(entranceRef);
   return (
-    <div ref={entranceRef} className="flex min-h-dvh items-center justify-center px-6 text-center text-ink-faint">
+    <div className="flex min-h-dvh items-center justify-center px-6 text-center text-ink-faint">
       {children}
     </div>
   );

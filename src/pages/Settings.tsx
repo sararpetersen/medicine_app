@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useEntranceAnimations } from "../hooks/useEntranceAnimations";
 import { requireSupabase } from "../lib/supabase";
 import { useSession } from "../hooks/useSession";
 import type { EffectType, Medication } from "../lib/db";
@@ -47,7 +46,7 @@ function ProfileSection() {
         <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-accent-soft text-2xl font-bold text-accent">
           {prefs.profilePhoto ? <img src={prefs.profilePhoto} alt="Your profile" className="h-full w-full object-cover" /> : initial}
         </div>
-        <div data-entrance-stagger className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2">
           <input
             ref={photoInput}
             type="file"
@@ -114,7 +113,7 @@ function MedicationsSection() {
   return (
     <section className="mt-6">
       <h2 className="font-bold">Medications</h2>
-      <div data-entrance-stagger className="mt-2 space-y-2">
+      <div className="mt-2 space-y-2">
         {meds.map((med) =>
           editing === med.id ? (
             <div key={med.id} className="rounded-2xl border border-line bg-surface p-4">
@@ -266,7 +265,7 @@ function ChipsSection() {
     <section className="mt-8">
       <h2 className="font-bold">Your side-effect chips</h2>
       <p className="mt-1 text-sm text-ink-soft">Tap a name to rename it. Deleted chips keep their old logs.</p>
-      <div data-entrance-stagger className="mt-4 space-y-2">
+      <div className="mt-4 space-y-2">
         {chips.map((chip) => (
           <ChipRow key={chip.id} chip={chip} onChanged={load} />
         ))}
@@ -333,7 +332,7 @@ function AccessibilitySection() {
       <div className="mt-1 space-y-4">
         <div>
           <p className="text-sm text-ink-soft">Text size</p>
-          <div data-entrance-stagger className="mt-2 flex gap-2">
+          <div className="mt-2 flex gap-2">
             {TEXT_SIZES.map(({ value, label }) => (
               <button
                 key={value}
@@ -349,7 +348,7 @@ function AccessibilitySection() {
 
         <div>
           <p className="text-sm text-ink-soft">Theme</p>
-          <div data-entrance-stagger className="mt-2 flex gap-2">
+          <div className="mt-2 flex gap-2">
             {THEMES.map(({ value, label }) => (
               <button key={value} onClick={() => setPref("theme", value)} aria-pressed={prefs.theme === value} className={seg(prefs.theme === value)}>
                 {label}
@@ -360,7 +359,7 @@ function AccessibilitySection() {
 
         <div>
           <p className="text-sm text-ink-soft">Font</p>
-          <div data-entrance-stagger className="mt-2 flex gap-2">
+          <div className="mt-2 flex gap-2">
             {FONTS.map(({ value, label }) => (
               <button
                 key={value}
@@ -402,12 +401,10 @@ function AccessibilitySection() {
 }
 
 export default function Settings() {
-  const entranceRef = useRef<HTMLDivElement>(null);
   const session = useSession();
-  useEntranceAnimations(entranceRef);
 
   return (
-    <div ref={entranceRef} className="pt-8">
+    <div className="pt-8">
       <h1 className="text-2xl font-bold">Settings</h1>
 
       <ProfileSection />

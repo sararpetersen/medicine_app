@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useEntranceAnimations } from "../hooks/useEntranceAnimations";
+import { useCallback, useEffect, useState } from "react";
 import type { ContextLog, DoseLog, EffectLog, Medication } from "../lib/db";
 import { listContextLogsBetween, listDoseLogsBetween, listEffectLogsBetween, listMedications, localDateString, toHm } from "../lib/db";
 import { contextInsights, severityWord, summarizeEffects } from "../lib/stats";
@@ -7,7 +6,6 @@ import { contextInsights, severityWord, summarizeEffects } from "../lib/stats";
 const RANGES = [14, 30, 90];
 
 export default function Report() {
-  const entranceRef = useRef<HTMLDivElement>(null);
   const [days, setDays] = useState(30);
   const [meds, setMeds] = useState<Medication[]>([]);
   const [doses, setDoses] = useState<DoseLog[]>([]);
@@ -38,8 +36,6 @@ export default function Report() {
     void refresh();
   }, [refresh]);
 
-  useEntranceAnimations(entranceRef, [loaded]);
-
   if (!loaded) {
     return <p className="pt-10 text-center text-ink-faint">One moment…</p>;
   }
@@ -58,11 +54,11 @@ export default function Report() {
   const rangeText = `${rangeStart.toLocaleDateString([], { day: "numeric", month: "short" })} – ${new Date().toLocaleDateString([], { day: "numeric", month: "short", year: "numeric" })}`;
 
   return (
-    <div ref={entranceRef} className="pt-8">
+    <div className="pt-8">
       <div className="no-print">
         <h1 className="text-2xl font-bold">Doctor report</h1>
         <p className="mt-1 text-sm text-ink-soft">A one-page summary for your next appointment. Print it or save it as a PDF.</p>
-        <div data-entrance-stagger className="mt-3 flex gap-2">
+        <div className="mt-3 flex gap-2">
           {RANGES.map((r) => (
             <button
               key={r}
@@ -96,7 +92,7 @@ export default function Report() {
             </p>
 
             <h3 className="mt-4 font-bold">Medication</h3>
-            <div data-entrance-stagger>
+            <div>
               {meds.filter((m) => m.active).map((m) => (
                 <p key={m.id} className="text-sm">
                   {m.name}
@@ -120,7 +116,7 @@ export default function Report() {
                   <th className="py-1 font-normal">Usually appears</th>
                 </tr>
               </thead>
-              <tbody data-entrance-stagger>
+              <tbody>
                 {summaries.map((s) => (
                   <tr key={s.label} className="border-t border-line">
                     <td className="py-1.5 pr-2">
@@ -138,7 +134,7 @@ export default function Report() {
             {insights.length > 0 && (
               <>
                 <h3 className="mt-4 font-bold">Context</h3>
-                <ul data-entrance-stagger className="mt-1 list-inside list-disc text-sm">
+                <ul className="mt-1 list-inside list-disc text-sm">
                   {insights.map((i) => (
                     <li key={i.label}>
                       {i.rateWith.toFixed(1)} effects/day on {i.label} vs {i.rateWithout.toFixed(1)} otherwise

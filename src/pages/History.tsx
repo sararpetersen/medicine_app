@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useEntranceAnimations } from "../hooks/useEntranceAnimations";
+import { useCallback, useEffect, useState } from "react";
 import type { ContextLog, DoseLog, EffectLog, Medication } from "../lib/db";
 import {
   deleteDoseLog,
@@ -54,7 +53,6 @@ interface DayGroup {
 }
 
 export default function History() {
-  const entranceRef = useRef<HTMLDivElement>(null);
   const [daysBack, setDaysBack] = useState(14);
   const [meds, setMeds] = useState<Medication[]>([]);
   const [days, setDays] = useState<DayGroup[]>([]);
@@ -104,14 +102,12 @@ export default function History() {
 
   const medName = (id: string) => meds.find((m) => m.id === id)?.name ?? "Medication";
 
-  useEntranceAnimations(entranceRef, [loaded]);
-
   if (!loaded) {
     return <p className="pt-10 text-center text-ink-faint">One moment…</p>;
   }
 
   return (
-    <div ref={entranceRef} className="pt-8">
+    <div className="pt-8">
       <h1 className="text-2xl font-bold">History</h1>
 
       {days.length === 0 ? (
@@ -120,11 +116,11 @@ export default function History() {
           <p className="text-sm text-accent">Nothing here yet. Once you log on the 'Today' screen, your timeline grows on its own.</p>
         </div>
       ) : (
-        <div data-entrance-stagger className="mt-4 space-y-6">
+        <div className="mt-4 space-y-6">
           {days.map((day) => (
             <section key={day.date}>
               <h2 className="font-bold">{dayTitle(day.date)}</h2>
-              <div data-entrance-stagger className="mt-2 space-y-2">
+              <div className="mt-2 space-y-2">
                 {day.doses.map((dose) => (
                   <div key={dose.id} className="flex items-center justify-between rounded-2xl border border-line bg-surface px-4 py-2">
                     <span>

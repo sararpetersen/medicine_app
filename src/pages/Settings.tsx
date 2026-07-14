@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { requireSupabase } from "../lib/supabase";
 import { useSession } from "../hooks/useSession";
 import type { EffectType, Medication } from "../lib/db";
-import { createEffectTypes, createMedication, listEffectTypes, listMedications, toHm, updateEffectType, updateMedication } from "../lib/db";
+import { createEffectTypes, createMedication, describeSchedule, listEffectTypes, listMedications, updateEffectType, updateMedication } from "../lib/db";
 import MedicationForm from "../components/MedicationForm";
 import { FONT_STACKS, usePrefs, type FontChoice, type TextSize, type Theme } from "../lib/prefs";
 
@@ -92,12 +92,6 @@ function ProfileSection() {
   );
 }
 
-function describeDose(med: Medication): string {
-  const dose = med.dose_amount != null ? `${med.dose_amount} ${med.dose_unit ?? ""}` : "";
-  const times = med.schedule_times.map(toHm).join(", ");
-  return [dose.trim(), times].filter(Boolean).join(" · ");
-}
-
 function MedicationsSection() {
   const [meds, setMeds] = useState<Medication[]>([]);
   const [editing, setEditing] = useState<string | "new" | null>(null);
@@ -138,7 +132,7 @@ function MedicationsSection() {
                   {med.name}
                   {!med.active && <span className="ml-2 text-sm font-normal text-ink-faint">paused</span>}
                 </p>
-                <p className="text-sm text-ink-soft">{describeDose(med)}</p>
+                <p className="text-sm text-ink-soft">{describeSchedule(med)}</p>
               </div>
               <div className="flex gap-3 text-sm">
                 <button onClick={() => setEditing(med.id)} className="text-accent hover:underline">

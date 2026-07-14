@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Medication, MedicationInput } from "../lib/db";
+import type { Medication, MedicationInput, ScheduleSlot } from "../lib/db";
 import { toHm } from "../lib/db";
 
 export default function MedicationForm({
@@ -14,20 +14,19 @@ export default function MedicationForm({
   onCancel?: () => void;
 }) {
   const [name, setName] = useState(initial?.name ?? "");
-  const [doseAmount, setDoseAmount] = useState(
-    initial?.dose_amount?.toString() ?? "",
-  );
   const [doseUnit, setDoseUnit] = useState(initial?.dose_unit ?? "mg");
-  const [times, setTimes] = useState<string[]>(
-    initial ? initial.schedule_times.map(toHm) : ["08:00"],
+  const [slots, setSlots] = useState<{ time: string; doseAmount: string }[]>(
+    initial
+      ? initial.schedule_times.map((s) => ({ time: toHm(s.time), doseAmount: s.dose_amount?.toString() ?? "" }))
+      : [{ time: "08:00", doseAmount: "" }],
   );
 
   const TIME_SUGGESTIONS = ["08:00", "14:00", "18:00", "21:00"];
   function setDosesPerDay(count: number) {
-    setTimes((prev) =>
+    setSlots((prev) =>
       count <= prev.length
         ? prev.slice(0, count)
-        : [...prev, ...TIME_SUGGESTIONS.slice(prev.length, count)],
+        : [...prev, ...TIME_SUGGESTIONS.slice(prev.length, count).map((time) => ({ time, doseAmount: prev[0]?.doseAmount ?? "" }))],
     );
   }
   const [busy, setBusy] = useState(false);
@@ -38,11 +37,14 @@ export default function MedicationForm({
     setBusy(true);
     setError(false);
     try {
+      const schedule_times: ScheduleSlot[] = slots.map((s) => ({
+        time: s.time,
+        dose_amount: s.doseAmount ? Number(s.doseAmount) : null,
+      }));
       await onSave({
         name: name.trim(),
-        dose_amount: doseAmount ? Number(doseAmount) : null,
-        dose_unit: doseAmount ? doseUnit.trim() || null : null,
-        schedule_times: times,
+        dose_unit: schedule_times.some((s) => s.dose_amount != null) ? doseUnit.trim() || null : null,
+        schedule_times,
       });
     } catch {
       setError(true);
@@ -70,31 +72,6 @@ export default function MedicationForm({
       </div>
 
       <div>
-        <label htmlFor="med-dose" className="mb-1 block text-sm text-ink-soft">
-          Dose (optional)
-        </label>
-        <div className="flex gap-2">
-          <input
-            id="med-dose"
-            type="number"
-            inputMode="decimal"
-            min="0"
-            step="any"
-            value={doseAmount}
-            onChange={(e) => setDoseAmount(e.target.value)}
-            placeholder="50"
-            className={`${inputClass} min-w-0 flex-1`}
-          />
-          <input
-            value={doseUnit}
-            onChange={(e) => setDoseUnit(e.target.value)}
-            className={`${inputClass} w-24`}
-            aria-label="Dose unit"
-          />
-        </div>
-      </div>
-
-      <div>
         <p className="mb-1 block text-sm text-ink-soft">
           How many times a day do you take it?
         </p>
@@ -104,9 +81,9 @@ export default function MedicationForm({
               key={n}
               type="button"
               onClick={() => setDosesPerDay(n)}
-              aria-pressed={times.length === n}
+              aria-pressed={slots.length === n}
               className={`flex-1 rounded-xl border px-3 py-2 text-sm transition-colors ${
-                times.length === n
+                slots.length === n
                   ? "border-accent bg-accent-soft font-bold text-accent"
                   : "border-line bg-surface text-ink-soft hover:border-line-strong hover:bg-canvas"
               }`}
@@ -116,24 +93,50 @@ export default function MedicationForm({
           ))}
         </div>
         <div className="mt-3 space-y-2">
-          {times.map((time, i) => (
+          {slots.map((slot, i) => (
             <div key={i} className="flex items-center gap-3">
               <span className="w-16 shrink-0 text-sm text-ink-faint">
-                {times.length === 1 ? "Time" : `Dose ${i + 1}`}
+                {slots.length === 1 ? "Time" : `Dose ${i + 1}`}
               </span>
               <input
                 type="time"
                 required
                 aria-label={`Dose time ${i + 1}`}
-                value={time}
+                value={slot.time}
                 onChange={(e) =>
-                  setTimes(times.map((t, j) => (j === i ? e.target.value : t)))
+                  setSlots(slots.map((s, j) => (j === i ? { ...s, time: e.target.value } : s)))
                 }
                 className={`${inputClass} min-w-0 flex-1`}
+              />
+              <input
+                type="number"
+                inputMode="decimal"
+                min="0"
+                step="any"
+                value={slot.doseAmount}
+                onChange={(e) =>
+                  setSlots(slots.map((s, j) => (j === i ? { ...s, doseAmount: e.target.value } : s)))
+                }
+                placeholder="Amount"
+                aria-label={`Dose amount at ${slot.time || "this time"}`}
+                className={`${inputClass} w-24`}
               />
             </div>
           ))}
         </div>
+        {slots.some((s) => s.doseAmount) && (
+          <div className="mt-3 flex items-center gap-2">
+            <label htmlFor="med-dose-unit" className="text-sm text-ink-soft">
+              Unit
+            </label>
+            <input
+              id="med-dose-unit"
+              value={doseUnit}
+              onChange={(e) => setDoseUnit(e.target.value)}
+              className={`${inputClass} w-24`}
+            />
+          </div>
+        )}
       </div>
 
       {error && (

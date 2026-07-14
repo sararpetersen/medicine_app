@@ -1,19 +1,22 @@
 import { requireSupabase } from "./supabase";
 
+export interface ScheduleSlot {
+  time: string;
+  dose_amount: number | null;
+}
+
 export interface Medication {
   id: string;
   name: string;
-  dose_amount: number | null;
   dose_unit: string | null;
-  schedule_times: string[];
+  schedule_times: ScheduleSlot[];
   active: boolean;
 }
 
 export interface MedicationInput {
   name: string;
-  dose_amount: number | null;
   dose_unit: string | null;
-  schedule_times: string[];
+  schedule_times: ScheduleSlot[];
 }
 
 export interface EffectType {
@@ -27,6 +30,20 @@ export interface EffectType {
 // Postgres time columns come back as "08:00:00"; inputs want "08:00".
 export function toHm(time: string): string {
   return time.slice(0, 5);
+}
+
+export function describeSchedule(med: Pick<Medication, "dose_unit" | "schedule_times">): string {
+  const slots = med.schedule_times;
+  if (slots.length === 0) return "";
+  const unitSuffix = med.dose_unit ? ` ${med.dose_unit}` : "";
+  const amounts = slots.map((s) => s.dose_amount);
+  const sameAmount = amounts.every((a) => a === amounts[0]);
+
+  if (sameAmount) {
+    const times = slots.map((s) => toHm(s.time)).join(", ");
+    return amounts[0] != null ? `${amounts[0]}${unitSuffix} at ${times}` : times;
+  }
+  return slots.map((s) => (s.dose_amount != null ? `${s.dose_amount}${unitSuffix} at ${toHm(s.time)}` : toHm(s.time))).join(", ");
 }
 
 export interface Profile {
@@ -58,7 +75,7 @@ export async function listMedications(): Promise<Medication[]> {
   const supabase = requireSupabase();
   const { data, error } = await supabase
     .from("sidekick_medications")
-    .select("id,name,dose_amount,dose_unit,schedule_times,active")
+    .select("id,name,dose_unit,schedule_times,active")
     .order("created_at");
   if (error) throw error;
   return data;

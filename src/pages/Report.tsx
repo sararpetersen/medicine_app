@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import type { ContextLog, DoseLog, EffectLog, Medication } from "../lib/db";
-import { listContextLogsBetween, listDoseLogsBetween, listEffectLogsBetween, listMedications, localDateString, toHm } from "../lib/db";
+import { describeSchedule, listContextLogsBetween, listDoseLogsBetween, listEffectLogsBetween, listMedications, localDateString } from "../lib/db";
 import { contextInsights, severityWord, summarizeEffects } from "../lib/stats";
 
 const RANGES = [14, 30, 90];
@@ -96,8 +96,7 @@ export default function Report() {
               {meds.filter((m) => m.active).map((m) => (
                 <p key={m.id} className="text-sm">
                   {m.name}
-                  {m.dose_amount != null && ` — ${m.dose_amount} ${m.dose_unit ?? ""}`}
-                  {m.schedule_times.length > 0 && ` at ${m.schedule_times.map(toHm).join(", ")}`}
+                  {describeSchedule(m) && ` — ${describeSchedule(m)}`}
                 </p>
               ))}
             </div>

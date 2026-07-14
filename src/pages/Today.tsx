@@ -5,6 +5,7 @@ import {
   createEffectLogs,
   deleteDoseLog,
   deleteEffectLog,
+  describeSchedule,
   getContextForDay,
   listDoseLogsForDay,
   listEffectLogsForDay,
@@ -45,14 +46,14 @@ function DoseCard({ med, logs, onChanged }: { med: Medication; logs: DoseLog[]; 
   const scheduled = Math.max(med.schedule_times.length, 1);
   const allLogged = taken.length >= scheduled;
 
-  const dose = med.dose_amount != null ? ` ${med.dose_amount} ${med.dose_unit ?? ""}` : "";
+  const dose = describeSchedule(med);
 
   return (
     <div className="rounded-2xl border border-line bg-surface p-4">
       <div className="flex items-center justify-between">
         <p className="font-bold">
           {med.name}
-          <span className="font-normal text-ink-soft">{dose}</span>
+          {dose && <span className="block font-normal text-ink-soft">{dose}</span>}
         </p>
         {taken.length > 0 && (
           <span className="rounded-full bg-good-soft px-3 py-1 text-sm text-good">

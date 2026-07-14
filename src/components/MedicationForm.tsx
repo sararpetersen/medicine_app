@@ -32,15 +32,31 @@ export default function MedicationForm({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
 
+  // Two rows sharing the same time (e.g. two pills taken together) merge into
+  // one slot with a combined amount, rather than saving as duplicate times.
+  function mergedSlots(): ScheduleSlot[] {
+    const merged: ScheduleSlot[] = [];
+    for (const s of slots) {
+      const time = s.time.length === 5 ? `${s.time}:00` : s.time;
+      const amount = s.doseAmount ? Number(s.doseAmount) : null;
+      const existing = merged.find((m) => m.time === time);
+      if (existing) {
+        if (existing.dose_amount != null || amount != null) {
+          existing.dose_amount = (existing.dose_amount ?? 0) + (amount ?? 0);
+        }
+      } else {
+        merged.push({ time, dose_amount: amount });
+      }
+    }
+    return merged;
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     setError(false);
     try {
-      const schedule_times: ScheduleSlot[] = slots.map((s) => ({
-        time: s.time,
-        dose_amount: s.doseAmount ? Number(s.doseAmount) : null,
-      }));
+      const schedule_times = mergedSlots();
       await onSave({
         name: name.trim(),
         dose_unit: schedule_times.some((s) => s.dose_amount != null) ? doseUnit.trim() || null : null,
@@ -73,7 +89,10 @@ export default function MedicationForm({
 
       <div>
         <p className="mb-1 block text-sm text-ink-soft">
-          How many times a day do you take it?
+          How many separate times of day do you take it?
+        </p>
+        <p className="mb-2 text-xs text-ink-faint">
+          If you take more than one pill at the same time, put that count in the amount field below — don't add another row for it.
         </p>
         <div className="flex gap-2" role="group" aria-label="Times per day">
           {[1, 2, 3, 4].map((n) => (

@@ -6,12 +6,16 @@ import { contextInsights, summarizeEffects, timingHistogram } from "../lib/stats
 
 const DAYS = 30;
 
+// Survives across route changes so switching tabs and coming back shows the
+// last-known data instantly instead of a loading flash.
+let cache: { doses: DoseLog[]; effects: EffectLog[]; contexts: ContextLog[] } | null = null;
+
 export default function Patterns() {
-  const [doses, setDoses] = useState<DoseLog[]>([]);
-  const [effects, setEffects] = useState<EffectLog[]>([]);
-  const [contexts, setContexts] = useState<ContextLog[]>([]);
+  const [doses, setDoses] = useState<DoseLog[]>(cache?.doses ?? []);
+  const [effects, setEffects] = useState<EffectLog[]>(cache?.effects ?? []);
+  const [contexts, setContexts] = useState<ContextLog[]>(cache?.contexts ?? []);
   const [focus, setFocus] = useState<string | null>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(cache !== null);
 
   const refresh = useCallback(async () => {
     const end = new Date();
@@ -24,6 +28,7 @@ export default function Patterns() {
       listEffectLogsBetween(start, end),
       listContextLogsBetween(localDateString(start), localDateString()),
     ]);
+    cache = { doses: d, effects: e, contexts: c };
     setDoses(d);
     setEffects(e);
     setContexts(c);

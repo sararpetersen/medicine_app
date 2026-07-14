@@ -68,8 +68,7 @@ export default function MedicationForm({
     }
   }
 
-  const inputClass =
-    "rounded-xl border border-line bg-surface px-4 py-3 outline-none focus:border-accent";
+  const inputClass = "rounded-xl border border-line bg-surface px-4 py-3 outline-none focus:border-accent";
 
   return (
     <form onSubmit={submit} className="space-y-4">
@@ -88,11 +87,9 @@ export default function MedicationForm({
       </div>
 
       <div>
-        <p className="mb-1 block text-sm text-ink-soft">
-          How many separate times of day do you take it?
-        </p>
+        <p className="mb-1 block text-sm text-ink-soft">How many separate times of day do you take it?</p>
         <p className="mb-2 text-xs text-ink-faint">
-          If you take more than one pill at the same time, put that count in the amount field below — don't add another row for it.
+          If you take more than one pill at the same time, put that count in the amount field below – don't add another row for it.
         </p>
         <div className="flex gap-2" role="group" aria-label="Times per day">
           {[1, 2, 3, 4].map((n) => (
@@ -114,17 +111,13 @@ export default function MedicationForm({
         <div className="mt-3 space-y-2">
           {slots.map((slot, i) => (
             <div key={i} className="flex items-center gap-3">
-              <span className="w-16 shrink-0 text-sm text-ink-faint">
-                {slots.length === 1 ? "Time" : `Dose ${i + 1}`}
-              </span>
+              <span className="w-16 shrink-0 text-sm text-ink-faint">{slots.length === 1 ? "Time" : `Dose ${i + 1}`}</span>
               <input
                 type="time"
                 required
                 aria-label={`Dose time ${i + 1}`}
                 value={slot.time}
-                onChange={(e) =>
-                  setSlots(slots.map((s, j) => (j === i ? { ...s, time: e.target.value } : s)))
-                }
+                onChange={(e) => setSlots(slots.map((s, j) => (j === i ? { ...s, time: e.target.value } : s)))}
                 className={`${inputClass} min-w-0 flex-1`}
               />
               <input
@@ -133,9 +126,7 @@ export default function MedicationForm({
                 min="0"
                 step="any"
                 value={slot.doseAmount}
-                onChange={(e) =>
-                  setSlots(slots.map((s, j) => (j === i ? { ...s, doseAmount: e.target.value } : s)))
-                }
+                onChange={(e) => setSlots(slots.map((s, j) => (j === i ? { ...s, doseAmount: e.target.value } : s)))}
                 placeholder="Amount"
                 aria-label={`Dose amount at ${slot.time || "this time"}`}
                 className={`${inputClass} w-24`}
@@ -148,12 +139,7 @@ export default function MedicationForm({
             <label htmlFor="med-dose-unit" className="text-sm text-ink-soft">
               Unit
             </label>
-            <input
-              id="med-dose-unit"
-              value={doseUnit}
-              onChange={(e) => setDoseUnit(e.target.value)}
-              className={`${inputClass} w-24`}
-            />
+            <input id="med-dose-unit" value={doseUnit} onChange={(e) => setDoseUnit(e.target.value)} className={`${inputClass} w-24`} />
           </div>
         )}
       </div>

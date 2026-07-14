@@ -52,11 +52,15 @@ interface DayGroup {
   context: ContextLog | null;
 }
 
+// Survives across route changes so switching tabs and coming back shows the
+// last-known data instantly instead of a loading flash.
+let cache: { daysBack: number; meds: Medication[]; days: DayGroup[] } | null = null;
+
 export default function History() {
-  const [daysBack, setDaysBack] = useState(14);
-  const [meds, setMeds] = useState<Medication[]>([]);
-  const [days, setDays] = useState<DayGroup[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const [daysBack, setDaysBack] = useState(cache?.daysBack ?? 14);
+  const [meds, setMeds] = useState<Medication[]>(cache?.meds ?? []);
+  const [days, setDays] = useState<DayGroup[]>(cache?.days ?? []);
+  const [loaded, setLoaded] = useState(cache !== null);
 
   const refresh = useCallback(async () => {
     const end = new Date();
@@ -91,8 +95,10 @@ export default function History() {
       }
     }
 
+    const sortedDays = [...groups.values()].sort((a, b) => b.date.localeCompare(a.date));
+    cache = { daysBack, meds: m, days: sortedDays };
     setMeds(m);
-    setDays([...groups.values()].sort((a, b) => b.date.localeCompare(a.date)));
+    setDays(sortedDays);
     setLoaded(true);
   }, [daysBack]);
 

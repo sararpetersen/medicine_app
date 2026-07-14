@@ -16,6 +16,17 @@ import {
 } from "../lib/db";
 import { usePrefs } from "../lib/prefs";
 
+// Survives across route changes (unlike component state) so switching tabs
+// and coming back shows the last-known data instantly instead of a loading flash,
+// while a fresh fetch still runs quietly underneath.
+let cache: {
+  meds: Medication[];
+  types: EffectType[];
+  doseLogs: DoseLog[];
+  effectLogs: EffectLog[];
+  context: ContextLog | null;
+} | null = null;
+
 const SEVERITIES = [
   { value: 1, label: "Barely" },
   { value: 2, label: "Annoying" },
@@ -440,12 +451,12 @@ function ContextCard({ context, onChanged }: { context: ContextLog | null; onCha
 
 export default function Today() {
   const { prefs } = usePrefs();
-  const [meds, setMeds] = useState<Medication[]>([]);
-  const [types, setTypes] = useState<EffectType[]>([]);
-  const [doseLogs, setDoseLogs] = useState<DoseLog[]>([]);
-  const [effectLogs, setEffectLogs] = useState<EffectLog[]>([]);
-  const [context, setContext] = useState<ContextLog | null>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [meds, setMeds] = useState<Medication[]>(cache?.meds ?? []);
+  const [types, setTypes] = useState<EffectType[]>(cache?.types ?? []);
+  const [doseLogs, setDoseLogs] = useState<DoseLog[]>(cache?.doseLogs ?? []);
+  const [effectLogs, setEffectLogs] = useState<EffectLog[]>(cache?.effectLogs ?? []);
+  const [context, setContext] = useState<ContextLog | null>(cache?.context ?? null);
+  const [loaded, setLoaded] = useState(cache !== null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const loadedDate = useRef(localDateString());
 
@@ -461,7 +472,9 @@ export default function Today() {
         listEffectLogsForDay(today),
         getContextForDay(localDateString(today)),
       ]);
-      setMeds(m.filter((x) => x.active));
+      const activeMeds = m.filter((x) => x.active);
+      cache = { meds: activeMeds, types: t, doseLogs: d, effectLogs: e, context: c };
+      setMeds(activeMeds);
       setTypes(t);
       setDoseLogs(d);
       setEffectLogs(e);

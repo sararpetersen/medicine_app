@@ -11,6 +11,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap"
     rel="stylesheet">
   <title>Bivi | Your little medication sidekick</title>
+  <script>
+    (function () {
+      try {
+        var saved = JSON.parse(localStorage.getItem("sidekick-prefs") || "{}");
+        var theme = saved.theme || "system";
+        var dark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.classList.toggle("dark", dark);
+      } catch (e) {}
+    })();
+  </script>
 </head>
 
 <body>

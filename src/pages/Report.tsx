@@ -5,13 +5,17 @@ import { contextInsights, severityWord, summarizeEffects } from "../lib/stats";
 
 const RANGES = [14, 30, 90];
 
+// Survives across route changes so switching tabs and coming back shows the
+// last-known data instantly instead of a loading flash.
+let cache: { days: number; meds: Medication[]; doses: DoseLog[]; effects: EffectLog[]; contexts: ContextLog[] } | null = null;
+
 export default function Report() {
-  const [days, setDays] = useState(30);
-  const [meds, setMeds] = useState<Medication[]>([]);
-  const [doses, setDoses] = useState<DoseLog[]>([]);
-  const [effects, setEffects] = useState<EffectLog[]>([]);
-  const [contexts, setContexts] = useState<ContextLog[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const [days, setDays] = useState(cache?.days ?? 30);
+  const [meds, setMeds] = useState<Medication[]>(cache?.meds ?? []);
+  const [doses, setDoses] = useState<DoseLog[]>(cache?.doses ?? []);
+  const [effects, setEffects] = useState<EffectLog[]>(cache?.effects ?? []);
+  const [contexts, setContexts] = useState<ContextLog[]>(cache?.contexts ?? []);
+  const [loaded, setLoaded] = useState(cache !== null);
 
   const refresh = useCallback(async () => {
     const end = new Date();
@@ -25,6 +29,7 @@ export default function Report() {
       listEffectLogsBetween(start, end),
       listContextLogsBetween(localDateString(start), localDateString()),
     ]);
+    cache = { days, meds: m, doses: d, effects: e, contexts: c };
     setMeds(m);
     setDoses(d);
     setEffects(e);
